@@ -2,19 +2,19 @@
 #define MAX_SND_CHANNELS 8
 
 enum {
-	CH_ANY = -1,
-	CH_PLAYER,
-	CH_ALIEN_FIRE,
-	CH_POINTS,
+    CH_ANY = -1,
+    CH_PLAYER,
+    CH_ALIEN_FIRE,
+    CH_POINTS,
 };
 
 enum {
-	SND_PLAYER_FIRE,
-	SND_ALIEN_FIRE,
-	SND_PLAYER_DIE,
-	SND_ALIEN_DIE,
-	SND_POINTS,
-	SND_MAX,
+    SND_PLAYER_FIRE,
+    SND_ALIEN_FIRE,
+    SND_PLAYER_DIE,
+    SND_ALIEN_DIE,
+    SND_POINTS,
+    SND_MAX,
 };
 
 void load_music(char* filename);

@@ -1,6 +1,8 @@
 #pragma once
 #include "type.h"
 
+#define PI (3.1415926)
+
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
