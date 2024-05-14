@@ -1,0 +1,11 @@
+*.d
+*.dx 
+*.o
+*.ox
+*.so
+*.a
+release
+*.patch
+GPATH
+GRTAGS
+GTAGS
