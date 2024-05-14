@@ -49,6 +49,7 @@ struct _ship {
     // struct list_head bullets;
 
     SDL_Texture* texture;
+    SDL_Texture* sheld;
 };
 
 typedef struct _ship Player;

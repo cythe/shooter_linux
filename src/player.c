@@ -8,9 +8,16 @@
 
 Player g_player = { 0 };
 SDL_Texture* playerTexture;
+SDL_Texture* sheldTexture;
 
 void init_player_texture(void)
 {
+    sheldTexture = loadTexture("./resource/sheld.png");
+    if (!playerTexture) {
+	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
+		"Couldn't load sheld texture: %s\n", SDL_GetError());
+    }
+
     playerTexture = loadTexture("./resource/player.png");
     if (!playerTexture) {
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
@@ -28,6 +35,7 @@ int init_player(Player* player)
     player->id_sound_die = SND_PLAYER_DIE;
 
     player->texture = playerTexture;
+    player->sheld = sheldTexture;
 
     SDL_QueryTexture(player->texture, NULL, NULL, &player->r.w, &player->r.h);
 
@@ -111,4 +119,8 @@ void logic_player(Player* player)
 void draw_player(Player* player)
 {
     blit(player->texture, player->r.x, player->r.y);
+
+    SDL_SetTextureBlendMode(player->sheld, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(player->sheld, 80);
+    blit(player->sheld , player->r.x, player->r.y);
 }
