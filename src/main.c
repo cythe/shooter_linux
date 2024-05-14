@@ -37,16 +37,8 @@ static void capFrameRate(unsigned* then, int* remainder)
     *then = SDL_GetTicks();
 }
 
-int main(int argc, char* argv[])
+int sdl_init(void)
 {
-    unsigned then;
-    int remainder;
-
-    then = SDL_GetTicks();
-    remainder = 0;
-
-    int windowFlags = 0;
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
 		"Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -73,6 +65,26 @@ int main(int argc, char* argv[])
 		"Couldn't create render: %s\n", SDL_GetError());
 	exit(1);
     }
+}
+
+void sdl_exit(void)
+{
+    SDL_DestroyRenderer(render);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
+	    "bye-bye: %s\n", SDL_GetError());
+}
+
+int main(int argc, char* argv[])
+{
+    unsigned then;
+    int remainder;
+
+    then = SDL_GetTicks();
+    remainder = 0;
+
+    sdl_init();
 
     init_stage();
 
@@ -116,11 +128,7 @@ int main(int argc, char* argv[])
 	capFrameRate(&then, &remainder);
     }
 
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
-	    "bye-bye: %s\n", SDL_GetError());
+    sdl_exit();
 
     return 0;
 }

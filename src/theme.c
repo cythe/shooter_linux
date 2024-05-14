@@ -31,7 +31,7 @@ static void draw_background(void)
 
 static Star stars[MAX_STARS] = { 0 };
 
-static void init_star_field(void)
+static void init_star(void)
 {
     int i;
 
@@ -43,7 +43,7 @@ static void init_star_field(void)
     }
 }
 
-static void draw_decoration(void)
+static void draw_stars(void)
 {
     int i, c;
 
@@ -57,7 +57,7 @@ static void draw_decoration(void)
     }
 }
 
-static void logic_decoration(void)
+static void logic_stars(void)
 {
     int i;
 
@@ -82,18 +82,18 @@ void init_theme_texture(void)
 void init_theme(void)
 {
     init_theme_texture();
-    init_star_field();
+    init_star();
 }
 
 void logic_theme(void)
 {
     logic_background();
-    logic_decoration();
+    logic_stars();
 }
 
 void draw_theme(void)
 {
     draw_background();
-    draw_decoration();
+    draw_stars();
 }
 
