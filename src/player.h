@@ -3,6 +3,7 @@
 
 #define PLAYER_SPEED 6
 #define PLAYER_BULLET_SPEED 16
+#define PLAYER_BULLET_LEVEL_MAX 5
 
 extern Player g_player;
 
