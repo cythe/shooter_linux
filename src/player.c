@@ -8,14 +8,14 @@
 
 Player g_player = { 0 };
 SDL_Texture* playerTexture;
-SDL_Texture* sheldTexture;
+SDL_Texture* shieldTexture;
 
 void init_player_texture(void)
 {
-    sheldTexture = loadTexture("resource/sheld.png");
-    if (!sheldTexture) {
+    shieldTexture = loadTexture("resource/shield.png");
+    if (!shieldTexture) {
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
-		"Couldn't load sheld texture: %s\n", SDL_GetError());
+		"Couldn't load shield texture: %s\n", SDL_GetError());
     }
 
     playerTexture = loadTexture("resource/player.png");
@@ -35,9 +35,10 @@ int init_player(Player* player)
     player->id_sound_die = SND_PLAYER_DIE;
 
     player->texture = playerTexture;
-    player->sheld = sheldTexture;
+    player->shield = shieldTexture;
 
     SDL_QueryTexture(player->texture, NULL, NULL, &player->r.w, &player->r.h);
+    SDL_QueryTexture(player->shield, NULL, NULL, &player->shield_r.w, &player->shield_r.h);
 
     return 0;
 }
@@ -107,6 +108,8 @@ void logic_player(Player* player)
 
     player->r.x += player->dx;
     player->r.y += player->dy;
+    player->shield_r.x += player->dx;
+    player->shield_r.y += player->dy;
 
     clip_ship(player);
     /* Z 射击, reload 控制炮弹频率 */
@@ -120,7 +123,8 @@ void draw_player(Player* player)
 {
     blit(player->texture, player->r.x, player->r.y);
 
-    SDL_SetTextureBlendMode(player->sheld, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(player->sheld, 80);
-    blit(player->sheld , player->r.x, player->r.y);
+    //SDL_SetTextureBlendMode(player->shield, SDL_BLENDMODE_BLEND);
+    //SDL_SetTextureAlphaMod(player->shield, 255);
+    blit(player->shield , player->r.x + player->r.w/2 - player->shield_r.w/2,
+	    player->r.y + player->r.h/2 - player->shield_r.h/2);
 }

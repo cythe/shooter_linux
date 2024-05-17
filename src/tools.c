@@ -60,38 +60,39 @@ void blitRect(SDL_Texture* texture, SDL_Rect* src, int x, int y)
 }
 
 /* X方向限制飞船位置 */
-void clip_ship_x(struct _ship* s)
+void clip_rect_x(SDL_Rect *r)
 {
-    if (s != NULL) {
-	if (s->r.x < 0) {
-	    s->r.x = 0;
-	}
+    if (r->x < 0) {
+	r->x = 0;
+    }
 
-	if (s->r.x > get_screen_width() - s->r.w) {
-	    s->r.x = get_screen_width() - s->r.w;
-	}
+    if (r->x > get_screen_width() - r->w) {
+	r->x = get_screen_width() - r->w;
     }
 }
 
 /* Y方向限制飞船位置 */
-void clip_ship_y(struct _ship* s)
+void clip_rect_y(SDL_Rect *r)
 {
-    if (s != NULL) {
-	if (s->r.y < 0) {
-	    s->r.y = 0;
-	}
-
-	if (s->r.y > get_screen_height() - s->r.h) {
-	    s->r.y = get_screen_height() - s->r.h;
-	}
+    if (r->y < 0) {
+	r->y = 0;
     }
+
+    if (r->y > get_screen_height() - r->h) {
+	r->y = get_screen_height() - r->h;
+    }
+}
+
+void clip_rect(SDL_Rect *r)
+{
+    clip_rect_x(r);
+    clip_rect_y(r);
 }
 
 /* 屏幕范围内限制飞船位置 */
 void clip_ship(struct _ship* s)
 {
-    clip_ship_x(s);
-    clip_ship_y(s);
+    clip_rect(&s->r);
 }
 
 /* 载入贴图 */

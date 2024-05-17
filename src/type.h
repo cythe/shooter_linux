@@ -32,6 +32,7 @@ list_to_(Bullet);
 /* 基础飞船的描述类型 */
 struct _ship {
     SDL_Rect r;
+    SDL_Rect shield_r;
 
     int dx;
     int dy;
@@ -49,7 +50,7 @@ struct _ship {
     // struct list_head bullets;
 
     SDL_Texture* texture;
-    SDL_Texture* sheld;
+    SDL_Texture* shield;
 };
 
 typedef struct _ship Player;
