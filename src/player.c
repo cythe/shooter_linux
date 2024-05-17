@@ -12,13 +12,13 @@ SDL_Texture* sheldTexture;
 
 void init_player_texture(void)
 {
-    sheldTexture = loadTexture("./resource/sheld.png");
-    if (!playerTexture) {
+    sheldTexture = loadTexture("resource/sheld.png");
+    if (!sheldTexture) {
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
 		"Couldn't load sheld texture: %s\n", SDL_GetError());
     }
 
-    playerTexture = loadTexture("./resource/player.png");
+    playerTexture = loadTexture("resource/player.png");
     if (!playerTexture) {
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
 		"Couldn't load player texture: %s\n", SDL_GetError());
