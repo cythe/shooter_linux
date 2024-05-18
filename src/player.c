@@ -122,6 +122,7 @@ void logic_player(Player* player)
 void draw_player(Player* player)
 {
     blit(player->texture, player->r.x, player->r.y);
+    //spin_rect(&player->r, player->texture, 45);
 
     //SDL_SetTextureBlendMode(player->shield, SDL_BLENDMODE_BLEND);
     //SDL_SetTextureAlphaMod(player->shield, 255);

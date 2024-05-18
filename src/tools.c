@@ -4,6 +4,20 @@
 #include "theme.h"
 #include "tools.h"
 
+/* 旋转矩形, 暂定用于导弹追踪 */
+void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle)
+{
+    // 设置源和目标矩形
+    SDL_Rect src = { 0, 0, r->w, r->h };
+    SDL_Rect dest = { r->x, r->y, r->w, r->h };
+
+    // 设置旋转中心
+    SDL_Point center = { r->w/2, r->h/2 }; // 旋转中心是图像的中心
+
+    // 使用 SDL_RenderCopyEx 渲染纹理
+    SDL_RenderCopyEx(render, t, &src, &dest, (double)angle, &center, SDL_FLIP_NONE);
+}
+
 /* 计算敌方子弹的攻击方向 */
 void calc_slope(int x1, int y1, int x2, int y2, float* dx, float* dy)
 {

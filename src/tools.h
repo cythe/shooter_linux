@@ -6,6 +6,9 @@
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
+/* 旋转这个玩意儿 */
+void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle);
+
 /* 计算斜率并生成dx dy */
 void calc_slope(int x1, int y1, int x2, int y2, float* dx, float* dy);
 
