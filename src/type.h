@@ -23,6 +23,7 @@ struct _bullet {
     int speed;
     struct list_head list;
 
+    SDL_Point target;
     SDL_Texture* texture;
 };
 
@@ -38,11 +39,14 @@ struct _ship {
     int dy;
     int health;
     int speed;
-    int reload;
     int bullet_level;
+    int reload;
+    int missile_level;
+    int missile_reload;
     int id_sound_die;
     struct list_head list;
 
+    SDL_Point center;
     /* bullets原先的设计思路是: 飞船"装载"子弹.
      * 但敌机被摧毁后子弹链表也丢了, 不仅不合理, 还内存泄露.
      * 所以把敌机子弹放在专门的管理链表bullets::enemies_bullets中.
@@ -93,6 +97,7 @@ list_to_(Debris);
 struct _point {
     SDL_Rect r;
 
+    int type;
     int speed;
     int health;
     int dx;

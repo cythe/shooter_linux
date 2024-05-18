@@ -14,6 +14,7 @@ enum {
     YELLOW = 3,
 };
 
+void get_center(SDL_Rect* r, SDL_Point* p);
 /* 旋转这个玩意儿 */
 void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle);
 

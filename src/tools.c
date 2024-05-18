@@ -4,6 +4,12 @@
 #include "theme.h"
 #include "tools.h"
 
+void get_center(SDL_Rect* r, SDL_Point* p)
+{
+    p->x = r->x +r->w/2;
+    p->y = r->y +r->h/2;
+}
+
 /* 旋转矩形, 暂定用于导弹追踪 */
 void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle)
 {
@@ -16,6 +22,9 @@ void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle)
 
     // 使用 SDL_RenderCopyEx 渲染纹理
     SDL_RenderCopyEx(render, t, &src, &dest, (double)angle, &center, SDL_FLIP_NONE);
+#if DEBUG
+    draw_rect(&dest, YELLOW);
+#endif
 }
 
 /* 计算敌方子弹的攻击方向 */

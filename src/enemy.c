@@ -96,7 +96,7 @@ void spawn_one_circle_enemy(void)
 	e = malloc(sizeof(Player));
 	memset(e, 0, sizeof(Player));
 
-	list_add(&e->list, &enemies);
+	list_add_tail(&e->list, &enemies);
 
 	e->r.x = SCREEN_WIDTH/2;
 	e->r.y = SCREEN_HEIGHT/2;
@@ -125,7 +125,7 @@ void spawn_one_enemy(void)
 	e = malloc(sizeof(Player));
 	memset(e, 0, sizeof(Player));
 
-	list_add(&e->list, &enemies);
+	list_add_tail(&e->list, &enemies);
 
 	e->r.x = SCREEN_WIDTH;
 	e->r.y = rand() % SCREEN_HEIGHT;

@@ -1,5 +1,6 @@
 #include <string.h>
 #include "player.h"
+#include "enemy.h"
 #include "type.h"
 #include "bullet.h"
 #include "sound.h"
@@ -32,6 +33,7 @@ int init_player(Player* player)
     player->r.y = 100;
     player->health = 1;
     player->bullet_level = 1;
+    player->missile_level = 1;
     player->id_sound_die = SND_PLAYER_DIE;
 
     player->texture = playerTexture;
@@ -43,9 +45,49 @@ int init_player(Player* player)
     return 0;
 }
 
-void player_fire_bullet(Player* player, int bullet_level)
+void player_fire_missile(Player* player)
 {
-    for(int i = 0; i < bullet_level; i++)
+    // 导弹
+    for(int i = 0; i < player->missile_level; i++)
+    {
+	Bullet* bullet = malloc(sizeof(Bullet));
+
+	memset(bullet, 0, sizeof(Bullet));
+
+	list_add_tail(&bullet->list, &player_missiles);
+
+	bullet->r.x = player->r.x;
+	bullet->r.y = player->r.y;
+	bullet->health = 1;
+	bullet->texture = playerBulletTexture;
+	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+	bullet->r.y += i * bullet->r.w;
+	bullet->r.y += (g_player.r.h / 2) - (bullet->r.h / 2);
+
+	Enemy* e = list_to_Enemy(enemies.next);
+	SDL_Point p;
+	get_center(&e->r, &p);
+	bullet->target = p;
+
+	float fdx, fdy;
+	float dx, dy;
+	calc_slope(p.x, p.y, e->r.x, e->r.y, &fdx, &fdy);
+	fdx *= PLAYER_MISSILE_SPEED;
+	fdy *= PLAYER_MISSILE_SPEED;
+	bullet->fdx = modff(fdx, &dx);
+	bullet->fdy = modff(fdy, &dy);
+	bullet->dx = (int)dx;
+	bullet->dy = (int)dy;
+    }
+
+    g_player.missile_reload = 40;
+}
+
+void player_fire_bullet(Player* player)
+{
+    // 普通子弹
+    for(int i = 0; i < player->bullet_level; i++)
     {
 	Bullet* bullet = malloc(sizeof(Bullet));
 
@@ -77,6 +119,10 @@ void logic_player(Player* player)
 
     if (player->reload > 0) {
 	player->reload--;
+    }
+
+    if (player->missile_reload > 0) {
+	player->missile_reload--;
     }
 
     player->dx = player->dy = 0;
@@ -113,9 +159,16 @@ void logic_player(Player* player)
 
     clip_ship(player);
     /* Z 射击, reload 控制炮弹频率 */
-    if (get_keyboard(SDL_SCANCODE_Z) && player->reload == 0) {
-	play_sound(SND_PLAYER_FIRE, CH_PLAYER);
-	player_fire_bullet(&g_player, g_player.bullet_level);
+    if (get_keyboard(SDL_SCANCODE_Z)) {
+	if (player->reload == 0) {
+	    play_sound(SND_PLAYER_FIRE, CH_PLAYER);
+	    player_fire_bullet(&g_player);
+	}
+
+	if (player->missile_reload ==0 ){
+	    //play_sound(SND_PLAYER_FIRE, CH_PLAYER);
+	    player_fire_missile(&g_player);
+	}
     }
 }
 

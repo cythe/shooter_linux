@@ -3,6 +3,7 @@
 
 extern struct list_head enemies_bullets;
 extern struct list_head player_bullets;
+extern struct list_head player_missiles;
 
 extern SDL_Texture* playerBulletTexture;
 extern SDL_Texture* enemieBulletTexture;

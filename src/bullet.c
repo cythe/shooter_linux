@@ -7,10 +7,16 @@
 #include "tools.h"
 
 LIST_HEAD(player_bullets);
+LIST_HEAD(player_missiles);
 LIST_HEAD(enemies_bullets);
 
 SDL_Texture* enemieBulletTexture;
 SDL_Texture* playerBulletTexture;
+
+static int catch_target(Bullet* b)
+{
+    return b->r.x == b->target.x && b->r.y == b->target.y;
+}
 
 static int bullet_hit_enemy(Bullet* b)
 {
@@ -47,7 +53,48 @@ static int bullet_hit_player(Bullet* b, Player* p)
     return 0;
 }
 
-static void logic_player_bullets(Player* p)
+static void __logic_player_missile(Bullet *b)
+{
+    float fdx, fdy;
+    float dx, dy;
+    SDL_Point target = b->target;
+
+    Enemy* e = list_to_Enemy(enemies.next);
+    SDL_Point p;
+    get_center(&e->r, &p);
+    b->target = p;
+
+    calc_slope(target.x, target.y, b->r.x, b->r.y, &fdx, &fdy);
+    fdx *= PLAYER_MISSILE_SPEED;
+    fdy *= PLAYER_MISSILE_SPEED;
+    b->fdx = modff(fdx, &dx);
+    b->fdy = modff(fdy, &dy);
+    b->dx = (int)dx;
+    b->dy = (int)dy;
+
+    b->r.x += b->dx;
+    b->r.y += b->dy;
+}
+
+static void logic_player_missile(void)
+{
+    struct list_head* pos;
+    Bullet* b;
+
+    list_for_each(pos, &player_missiles)
+    {
+	b = list_to_Bullet(pos);
+
+	__logic_player_missile(b);
+
+	if (catch_target(b) || out_of_screen(&b->r) || bullet_hit_enemy(b)) {
+	    pos = list_del_update_pos(pos);
+	    free(b);
+	}
+    }
+}
+
+static void logic_player_bullets(void)
 {
     struct list_head* pos;
     Bullet* b;
@@ -133,16 +180,37 @@ static void draw_enemies_bullets(void)
     }
 }
 
-static void draw_player_bullets(Player* p)
+static void draw_player_missile(void)
+{
+    struct list_head* pos;
+
+    list_for_each(pos, &player_missiles)
+    {
+	Bullet* b = list_to_Bullet(pos);
+#if 0
+	blit(b->texture, b->r.x, b->r.y);
+#if DEBUG
+	draw_rect(&b->r, YELLOW);
+#endif
+#else
+	spin_rect(&b->r, b->texture, 45);
+#endif
+    }
+}
+static void draw_player_bullets(void)
 {
     struct list_head* pos;
 
     list_for_each(pos, &player_bullets)
     {
 	Bullet* b = list_to_Bullet(pos);
+#if 0
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
 	draw_rect(&b->r, YELLOW);
+#endif
+#else
+	spin_rect(&b->r, b->texture, 45);
 #endif
     }
 }
@@ -162,12 +230,14 @@ void init_bullet_texture(void)
 
 void logic_bullets(void)
 {
-    logic_player_bullets(&g_player);
+    logic_player_bullets();
+    logic_player_missile();
     logic_enemy_bullets();
 }
 
 void draw_bullets(void)
 {
-    draw_player_bullets(&g_player);
+    draw_player_bullets();
+    draw_player_missile();
     draw_enemy_bullets();
 }

@@ -24,6 +24,7 @@ static void __gen_point_pod(int x, int y, int t)
     p->dx = -(rand() % 5);
     p->dy = (rand() % 5) - (rand() % 5);
     p->health = 60 * 10;
+    p->type = t;
     p->texture = pointsTexture[t];
 
     SDL_QueryTexture(p->texture, NULL, NULL, &p->r.w, &p->r.h);
@@ -87,41 +88,45 @@ void init_point_texture(void)
 void logic_points(void)
 {
     struct list_head* pos;
-    Point* e;
+    Point* p;
     Player* player = get_player();
 
     list_for_each(pos, &points)
     {
-	e = list_to_Point(pos);
+	p = list_to_Point(pos);
 
-	if (e->r.x < 0) {
-	    e->r.x = 0;
-	    e->dx = -e->dx;
+	if (p->r.x < 0) {
+	    p->r.x = 0;
+	    p->dx = -p->dx;
 	}
 
-	if (e->r.x + e->r.w > SCREEN_WIDTH) {
-	    e->r.x = SCREEN_WIDTH - e->r.w;
-	    e->dx = -e->dx;
+	if (p->r.x + p->r.w > SCREEN_WIDTH) {
+	    p->r.x = SCREEN_WIDTH - p->r.w;
+	    p->dx = -p->dx;
 	}
 
-	if (e->r.y < 0) {
-	    e->r.y = 0;
-	    e->dy = -e->dy;
+	if (p->r.y < 0) {
+	    p->r.y = 0;
+	    p->dy = -p->dy;
 	}
 
-	if (e->r.y + e->r.h > SCREEN_HEIGHT) {
-	    e->r.y = SCREEN_HEIGHT - e->r.h;
-	    e->dy = -e->dy;
+	if (p->r.y + p->r.h > SCREEN_HEIGHT) {
+	    p->r.y = SCREEN_HEIGHT - p->r.h;
+	    p->dy = -p->dy;
 	}
 
-	e->r.x += e->dx;
-	e->r.y += e->dy;
+	p->r.x += p->dx;
+	p->r.y += p->dy;
 
-	if (player != NULL && collision(&e->r, &player->r)) {
-	    e->health = 0;
+	if (player != NULL && collision(&p->r, &player->r)) {
+	    p->health = 0;
 
-	    if(g_player.bullet_level < PLAYER_BULLET_LEVEL_MAX) {
+	    if(p->type == POINT_TYPE_P && g_player.bullet_level < PLAYER_BULLET_LEVEL_MAX) {
 		g_player.bullet_level++;
+	    }
+
+	    if(p->type == POINT_TYPE_M && g_player.missile_level < PLAYER_MISSILE_LEVEL_MAX) {
+		g_player.missile_level++;
 	    }
 
 	    highscore = MAX(score, highscore);
@@ -129,9 +134,9 @@ void logic_points(void)
 	    play_sound(SND_POINTS, CH_POINTS);
 	}
 
-	if (--e->health <= 0) {
+	if (--p->health <= 0) {
 	    pos = list_del_update_pos(pos);
-	    free(e);
+	    free(p);
 	}
     }
 }
