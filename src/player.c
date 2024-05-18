@@ -148,8 +148,8 @@ void logic_player(Player* player)
 
     /* X 变速, 速度减半 */
     if (get_keyboard(SDL_SCANCODE_X)) {
-	player->dx /= 2;
-	player->dy /= 2;
+	player->dx /= 3;
+	player->dy /= 3;
     }
 
     player->r.x += player->dx;
@@ -178,7 +178,6 @@ void draw_player(Player* player)
 #if DEBUG
     draw_rect(&player->r, GREEN);
 #endif
-    //spin_rect(&player->r, player->texture, 45);
 
     //SDL_SetTextureBlendMode(player->shield, SDL_BLENDMODE_BLEND);
     //SDL_SetTextureAlphaMod(player->shield, 255);
