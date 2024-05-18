@@ -7,6 +7,7 @@
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
 #define DEBUG 1
+
 enum {
     RED = 0,
     GREEN = 1,

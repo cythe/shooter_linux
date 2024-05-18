@@ -101,8 +101,8 @@ int main(int argc, char* argv[])
 	logic_theme();
 
 	/* 各对象逻辑运算 */
-	logic_player(&g_player);
 	logic_bullets();
+	logic_player(&g_player);
 	logic_enemies();
 	logic_destroy_effect();
 	logic_points();
