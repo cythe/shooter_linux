@@ -39,7 +39,7 @@ static void enemy_fire_bullet(Player* e)
     bullet->fdy = modff(fdy, &dy);
     bullet->dx = (int)dx;
     bullet->dy = (int)dy;
-    e->reload = (rand() % 60 * 2);
+    e->bullet_reload = (rand() % 60 * 2);
 }
 #else
 static void enemy_fire_bullet(Enemy * e)
@@ -101,7 +101,7 @@ void spawn_one_circle_enemy(void)
 	e->r.x = SCREEN_WIDTH/2;
 	e->r.y = SCREEN_HEIGHT/2;
 	e->health = 1;
-	e->reload = 60 * (1 + (rand() % 3));
+	e->bullet_reload = 60 * (1 + (rand() % 3));
 	e->texture = enemieTexture;
 
 	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
@@ -130,7 +130,7 @@ void spawn_one_enemy(void)
 	e->r.x = SCREEN_WIDTH;
 	e->r.y = rand() % SCREEN_HEIGHT;
 	e->health = 1;
-	e->reload = 60 * (1 + (rand() % 3));
+	e->bullet_reload = 60 * (1 + (rand() % 3));
 	e->texture = enemieTexture;
 
 	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
@@ -176,7 +176,7 @@ void logic_enemies(void)
 		gen_destroy_effect(e);
 	    }
 	    free(e);
-	} else if (--e->reload <= 0) {
+	} else if (--e->bullet_reload <= 0) {
 	    play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
 	    enemy_fire_bullet(e);
 	}

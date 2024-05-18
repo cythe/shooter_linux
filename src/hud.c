@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include "theme.h"
 #include "type.h"
 #include "hud.h"
 #include "stage.h"
 #include "tools.h"
+#include "player.h"
 
 SDL_Texture* fontTexture;
 char drawTextBuffer[MAX_LINE_LENGTH] = { 0 };
@@ -55,12 +57,16 @@ void init_hud_texture(void)
 
 void draw_hud(void)
 {
-    draw_text(10, 10, 255, 255, 255, "SCORE: %03d", score);
-
     if (score > 0 && score == highscore) {
-	draw_text(960, 10, 0, 255, 0, "HIGH SCORE: %03d", highscore);
+	draw_text(SCREEN_WIDTH/2-17*18/2, 10, 0, 255, 0, "HIGH SCORE: %03d", highscore);
     } else {
-	draw_text(960, 10, 255, 255, 255, "HIGH SCORE: %03d", highscore);
+	draw_text(SCREEN_WIDTH/2-17*18/2, 10, 255, 255, 255, "HIGH SCORE: %03d", highscore);
     }
+
+    draw_text(960, 10, 255, 255, 255, "SCORE:   %03d", score);
+    draw_text(960, 40, 255, 255, 255, "PLAYERS: %03d", g_player.health);
+    draw_text(960, 70, 255, 255, 255, "POWER:   %03d", g_player.bullet_level);
+    draw_text(960, 100, 255, 255, 255, "MISSILE: %03d", g_player.missile_level);
+    draw_text(960, 130, 255, 255, 255, "BOMB:    %03d", g_player.bomb);
 }
 

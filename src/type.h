@@ -39,8 +39,10 @@ struct _ship {
     int dy;
     int health;
     int speed;
+    int bomb;
+    int max_bomb_count;
     int bullet_level;
-    int reload;
+    int bullet_reload;
     int missile_level;
     int missile_reload;
     int id_sound_die;

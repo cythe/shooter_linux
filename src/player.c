@@ -31,9 +31,10 @@ int init_player(Player* player)
     player->speed = PLAYER_SPEED;
     player->r.x = 100;
     player->r.y = 100;
-    player->health = 1;
+    player->health = 3;
     player->bullet_level = 1;
     player->missile_level = 1;
+    player->bomb = 3;
     player->id_sound_die = SND_PLAYER_DIE;
 
     player->texture = playerTexture;
@@ -106,7 +107,7 @@ void player_fire_bullet(Player* player)
 	bullet->r.y += (g_player.r.h / 2) - (bullet->r.h / 2);
     }
 
-    g_player.reload = 8;
+    g_player.bullet_reload = 8;
 
 }
 
@@ -117,8 +118,8 @@ void logic_player(Player* player)
     if (player == NULL)
 	return;
 
-    if (player->reload > 0) {
-	player->reload--;
+    if (player->bullet_reload > 0) {
+	player->bullet_reload--;
     }
 
     if (player->missile_reload > 0) {
@@ -160,7 +161,7 @@ void logic_player(Player* player)
     clip_ship(player);
     /* Z 射击, reload 控制炮弹频率 */
     if (get_keyboard(SDL_SCANCODE_Z)) {
-	if (player->reload == 0) {
+	if (player->bullet_reload == 0) {
 	    play_sound(SND_PLAYER_FIRE, CH_PLAYER);
 	    player_fire_bullet(&g_player);
 	}

@@ -31,7 +31,7 @@ static int bullet_hit_enemy(Bullet* b)
 	    score++;
 	    highscore = MAX(score, highscore);
 	    b->health = 0;
-	    e->health = 0;
+	    e->health--;
 
 	    return 1;
 	}
@@ -45,7 +45,7 @@ static int bullet_hit_player(Bullet* b, Player* p)
     if (collision(&b->r, &p->r)) {
 	play_sound(SND_PLAYER_DIE, CH_PLAYER);
 	b->health = 0;
-	p->health = 0;
+	p->health--;
 
 	return 1;
     }

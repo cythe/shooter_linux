@@ -129,6 +129,14 @@ void logic_points(void)
 		g_player.missile_level++;
 	    }
 
+	    if(p->type == POINT_TYPE_B && g_player.bomb < PLAYER_BOMB_MAX_BOMB_CNT) {
+		g_player.bomb++;
+	    }
+
+	    if(p->type == POINT_TYPE_U && g_player.health < PLAYER_MAX_LIFE) {
+		g_player.health++;
+	    }
+
 	    highscore = MAX(score, highscore);
 
 	    play_sound(SND_POINTS, CH_POINTS);
