@@ -6,6 +6,14 @@
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
+#define DEBUG 1
+enum {
+    RED = 0,
+    GREEN = 1,
+    BLUE = 2,
+    YELLOW = 3,
+};
+
 /* 旋转这个玩意儿 */
 void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle);
 
@@ -17,6 +25,9 @@ int collision(SDL_Rect* r1, SDL_Rect* r2);
 
 /* 判断飞船是不是飞了 */
 int out_of_screen(SDL_Rect* r);
+
+/* 绘制一个矩形框, 用来debug */
+void draw_rect(SDL_Rect* r, int color);
 
 /* 绘制任意形状 */
 void blit(SDL_Texture* texture, int x, int y);

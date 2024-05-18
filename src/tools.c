@@ -60,6 +60,29 @@ void blit(SDL_Texture* texture, int x, int y)
     SDL_RenderCopy(render, texture, NULL, &dest);
 }
 
+/* 绘制一个矩形框, 用来debug */
+void draw_rect(SDL_Rect* r, int color)
+{
+    switch(color) {
+	case RED:
+	    SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
+	    break;
+	case GREEN:
+	    SDL_SetRenderDrawColor(render, 0, 255, 0, 255);
+	    break;
+	case BLUE:
+	    SDL_SetRenderDrawColor(render, 0, 0, 255, 255);
+	    break;
+	case YELLOW:
+	    SDL_SetRenderDrawColor(render, 255, 255, 0, 255);
+	    break;
+	default:
+	    break;
+    }
+
+    SDL_RenderDrawRect(render, r);
+}
+
 /* 绘制任意矩形范围 */
 void blitRect(SDL_Texture* texture, SDL_Rect* src, int x, int y)
 {

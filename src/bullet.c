@@ -115,6 +115,9 @@ static void draw_enemy_bullets(void)
     {
 	Bullet* b = list_to_Bullet(pos);
 	blit(b->texture, b->r.x, b->r.y);
+#if DEBUG
+	draw_rect(&b->r, YELLOW);
+#endif
     }
 }
 
@@ -138,6 +141,9 @@ static void draw_player_bullets(Player* p)
     {
 	Bullet* b = list_to_Bullet(pos);
 	blit(b->texture, b->r.x, b->r.y);
+#if DEBUG
+	draw_rect(&b->r, YELLOW);
+#endif
     }
 }
 

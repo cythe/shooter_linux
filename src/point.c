@@ -144,5 +144,8 @@ void draw_point_pods(void)
     {
 	Point* d = list_to_Point(pos);
 	blit(d->texture, d->r.x, d->r.y);
+#if DEBUG
+	draw_rect(&d->r, YELLOW);
+#endif
     }
 }

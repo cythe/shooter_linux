@@ -191,6 +191,9 @@ void draw_enemies(void)
     {
 	Enemy* e = list_to_Enemy(pos);
 	blit(e->texture, e->r.x, e->r.y);
+#if DEBUG
+	draw_rect(&e->r, RED);
+#endif
     }
 }
 
