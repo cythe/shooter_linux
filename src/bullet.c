@@ -49,11 +49,10 @@ static int bullet_hit_player(Bullet* b, Player* p)
 	play_sound(SND_PLAYER_DIE, CH_PLAYER);
 	b->health = 0;
 
-	if (p->shield_health >= 0) {
+	if (p->shield_health > 0) {
 	    play_sound(SND_SHIELD_SHATTER, CH_PLAYER);
 	    sheild_shatter(p);
-	    if (p->shield_health>0)
-		p->shield_health --;
+	    p->shield_health --;
 	} else {
 	    if (p->health>0)
 		p->health--;
@@ -242,7 +241,7 @@ static void draw_player_bomb(void)
     list_for_each(pos, &player_bomb_bullets)
     {
 	Bullet* b = list_to_Bullet(pos);
-#if 0
+#if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
 	draw_rect(&b->r, YELLOW);
@@ -260,7 +259,7 @@ static void draw_player_missile(void)
     list_for_each(pos, &player_missiles)
     {
 	Bullet* b = list_to_Bullet(pos);
-#if 0
+#if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
 	draw_rect(&b->r, YELLOW);
@@ -277,7 +276,7 @@ static void draw_player_bullets(void)
     list_for_each(pos, &player_bullets)
     {
 	Bullet* b = list_to_Bullet(pos);
-#if 0
+#if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
 	draw_rect(&b->r, YELLOW);
