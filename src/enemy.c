@@ -23,6 +23,7 @@ static void enemy_fire_bullet(Player* e)
 
     bullet->r.x = e->r.x;
     bullet->r.y = e->r.y;
+    bullet->type = BULLET_TYPE_NORMAL;
     bullet->health = 1;
     bullet->texture = enemieBulletTexture;
     SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
@@ -48,7 +49,7 @@ static void enemy_fire_bullet(Enemy * e)
     Player * player = get_player();
 
     int d = 0;
-    for (int i = 0; i < 36; i++)
+    for (int i = 0; i < 120; i++)
     {
 	bullet = malloc(sizeof(Bullet));
 	memset(bullet, 0, sizeof(Bullet));
@@ -68,7 +69,7 @@ static void enemy_fire_bullet(Enemy * e)
 	SDL_Point dp;
 
 	calculate_circle_point(p, 300, d, &dp);
-	d += 10;
+	d += 3;
 	//calculate_line_point(p, bullet->target, &dp);
 	float fdx, fdy;
 	float dx, dy;
@@ -82,7 +83,7 @@ static void enemy_fire_bullet(Enemy * e)
 	bullet->dy = (int)dy;
 	//printf("x=%d, y=%d, dx=%f, dy=%f\n", p.x, p.y, bullet->dy, bullet->dy);
     }
-    e->reload = 10; // (rand() % 60);
+    e->bullet_reload = 10; // (rand() % 60);
 }
 
 #endif
@@ -101,18 +102,18 @@ void spawn_one_circle_enemy(void)
 	e->r.x = SCREEN_WIDTH/2;
 	e->r.y = SCREEN_HEIGHT/2;
 	e->health = 1;
-	e->bullet_reload = 60 * (1 + (rand() % 3));
+	e->bullet_reload = 60; // * (1 + (rand() % 3));
 	e->texture = enemieTexture;
 
 	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
 
-	e->dx = -(2 + (rand() % 4));
+	//e->dx = -(2 + (rand() % 4));
 
 	if (e->r.y > SCREEN_HEIGHT - e->r.h) {
 	    e->r.y = SCREEN_HEIGHT - e->r.h;
 	}
 
-	enemySpawnTimer = 30 + (rand() % 60);
+	enemySpawnTimer = 6000;//30 + (rand() % 60);
 
     }
 }
@@ -170,9 +171,9 @@ void logic_enemies(void)
 	e->r.x += e->dx;
 	e->r.y += e->dy;
 
-	if (out_of_screen(&e->r) || e->health == 0) {
+	if (out_of_screen(&e->r) || e->health <= 0) {
 	    pos = list_del_update_pos(pos);
-	    if (e->health == 0) {
+	    if (e->health <= 0) {
 		gen_destroy_effect(e);
 	    }
 	    free(e);

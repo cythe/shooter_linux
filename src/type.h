@@ -7,6 +7,12 @@ struct _color {
     int r, g, b, a;
 };
 
+enum {
+    BULLET_TYPE_NORMAL = 0,
+    BULLET_TYPE_MISSILE = 1,
+    BULLET_TYPE_BOMB = 2,
+};
+
 /* 基础子弹的描述类型 */
 struct _bullet {
     SDL_Rect r;
@@ -19,6 +25,7 @@ struct _bullet {
     float fdx_sum;
     float fdy_sum;
 
+    int type;
     int health;
     int speed;
     struct list_head list;
@@ -40,6 +47,7 @@ struct _ship {
     int health;
     int speed;
     int bomb;
+    int bomb_reload;
     int max_bomb_count;
     int bullet_level;
     int bullet_reload;

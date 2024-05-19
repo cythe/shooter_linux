@@ -46,6 +46,50 @@ int init_player(Player* player)
     return 0;
 }
 
+static void player_fire_bomb(Player * e)
+{
+    Bullet * bullet;
+    Player * player = get_player();
+
+    int d = 0;
+    for (int i = 0; i < 120; i++)
+    {
+	bullet = malloc(sizeof(Bullet));
+	memset(bullet, 0, sizeof(Bullet));
+
+	list_add(&bullet->list, &player_bomb_bullets);
+	bullet->r.x = e->r.x;
+	bullet->r.y = e->r.y;
+	bullet->type = BULLET_TYPE_BOMB;
+	bullet->health = 1;
+	bullet->speed = 8;
+	bullet->texture = enemieBulletTexture;
+	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+	bullet->r.x += (e->r.w / 2) - (bullet->r.w / 2);
+	bullet->r.y += (e->r.h / 2) - (bullet->r.h / 2);
+
+	SDL_Point p = { e->r.x, e->r.y };
+	SDL_Point dp;
+
+	calculate_circle_point(p, 600, d, &dp);
+	d += 3;
+	//calculate_line_point(p, bullet->target, &dp);
+	float fdx, fdy;
+	float dx, dy;
+	calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
+	fdx *= bullet->speed;
+	fdy *= bullet->speed;
+	calculate_circle_speed(bullet->speed, d, &fdx, &fdy);
+	bullet->fdx = modff(fdx, &dx);
+	bullet->fdy = modff(fdy, &dy);
+	bullet->dx = (int)dx;
+	bullet->dy = (int)dy;
+	//printf("x=%d, y=%d, dx=%f, dy=%f\n", p.x, p.y, bullet->dy, bullet->dy);
+    }
+    g_player.bomb_reload = 100;
+}
+
 void player_fire_missile(Player* player)
 {
     // 导弹
@@ -59,6 +103,7 @@ void player_fire_missile(Player* player)
 
 	bullet->r.x = player->r.x;
 	bullet->r.y = player->r.y;
+	bullet->type = BULLET_TYPE_MISSILE;
 	bullet->health = 1;
 	bullet->texture = playerBulletTexture;
 	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
@@ -99,6 +144,7 @@ void player_fire_bullet(Player* player)
 	bullet->r.x = player->r.x;
 	bullet->r.y = player->r.y;
 	bullet->dx = PLAYER_BULLET_SPEED;
+	bullet->type = BULLET_TYPE_NORMAL;
 	bullet->health = 1;
 	bullet->texture = playerBulletTexture;
 	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
@@ -124,6 +170,9 @@ void logic_player(Player* player)
 
     if (player->missile_reload > 0) {
 	player->missile_reload--;
+    }
+    if (player->bomb_reload > 0) {
+	player->bomb_reload--;
     }
 
     player->dx = player->dy = 0;
@@ -169,6 +218,12 @@ void logic_player(Player* player)
 	if (player->missile_reload ==0 ){
 	    //play_sound(SND_PLAYER_FIRE, CH_PLAYER);
 	    player_fire_missile(&g_player);
+	}
+    }
+
+    if (get_keyboard(SDL_SCANCODE_C)) {
+	if (player->bomb_reload == 0) {
+	    player_fire_bomb(&g_player);
 	}
     }
 }

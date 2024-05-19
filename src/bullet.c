@@ -8,6 +8,7 @@
 
 LIST_HEAD(player_bullets);
 LIST_HEAD(player_missiles);
+LIST_HEAD(player_bomb_bullets);
 LIST_HEAD(enemies_bullets);
 
 SDL_Texture* enemieBulletTexture;
@@ -30,9 +31,10 @@ static int bullet_hit_enemy(Bullet* b)
 	    gen_point_pod(e->r.x + e->r.w / 2, e->r.y + e->r.h / 2);
 	    score++;
 	    highscore = MAX(score, highscore);
-	    b->health = 0;
-	    if (e->health > 0)
-		e->health--;
+	    e->health -= b->health;
+
+	    if(b->type != BULLET_TYPE_BOMB)
+		b->health = 0;
 
 	    return 1;
 	}
@@ -53,6 +55,49 @@ static int bullet_hit_player(Bullet* b, Player* p)
     }
 
     return 0;
+}
+
+static void logic_player_bomb(void)
+{
+    struct list_head* pos;
+    Bullet* b;
+    int flagdx, flagdy;
+
+    list_for_each(pos, &player_bomb_bullets)
+    {
+	b = list_to_Bullet(pos);
+	b->r.x += b->dx;
+	b->r.y += b->dy;
+
+	if (b->fdx < 0)
+	    flagdx = -1;
+	else
+	    flagdx = 1;
+
+	if (b->fdy < 0)
+	    flagdy = -1;
+	else
+	    flagdy = 1;
+
+	b->fdx_sum += fabs(b->fdx);
+	b->fdy_sum += fabs(b->fdy);
+
+	if ((b->fdx_sum) > 0.5) {
+	    b->fdx_sum -= 1.0;
+	    b->r.x += flagdx * 1;
+	}
+	if ((b->fdy_sum) > 0.5) {
+	    b->fdy_sum -= 1.0;
+	    b->r.y += flagdy * 1;
+	}
+
+	bullet_hit_enemy(b);
+
+	if (out_of_screen(&b->r) || b->health <= 0) {
+	    pos = list_del_update_pos(pos);
+	    free(b);
+	}
+    }
 }
 
 static void __logic_player_missile(Bullet *b)
@@ -182,6 +227,24 @@ static void draw_enemies_bullets(void)
     }
 }
 
+static void draw_player_bomb(void)
+{
+    struct list_head* pos;
+
+    list_for_each(pos, &player_bomb_bullets)
+    {
+	Bullet* b = list_to_Bullet(pos);
+#if 0
+	blit(b->texture, b->r.x, b->r.y);
+#if DEBUG
+	draw_rect(&b->r, YELLOW);
+#endif
+#else
+	spin_rect(&b->r, b->texture, 45);
+#endif
+    }
+}
+
 static void draw_player_missile(void)
 {
     struct list_head* pos;
@@ -234,6 +297,7 @@ void logic_bullets(void)
 {
     logic_player_bullets();
     logic_player_missile();
+    logic_player_bomb();
     logic_enemy_bullets();
 }
 
@@ -241,5 +305,6 @@ void draw_bullets(void)
 {
     draw_player_bullets();
     draw_player_missile();
+    draw_player_bomb();
     draw_enemy_bullets();
 }
