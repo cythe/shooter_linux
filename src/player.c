@@ -32,6 +32,7 @@ int init_player(Player* player)
     player->r.x = 100;
     player->r.y = 100;
     player->health = 3;
+    player->shield_health = 1;
     player->bullet_level = 1;
     player->missile_level = 1;
     player->bomb = 3;
@@ -237,6 +238,8 @@ void draw_player(Player* player)
 
     //SDL_SetTextureBlendMode(player->shield, SDL_BLENDMODE_BLEND);
     //SDL_SetTextureAlphaMod(player->shield, 255);
-    blit(player->shield , player->r.x + player->r.w/2 - player->shield_r.w/2,
-	    player->r.y + player->r.h/2 - player->shield_r.h/2);
+    if (player->shield_health > 0) {
+	blit(player->shield , player->r.x + player->r.w/2 - player->shield_r.w/2,
+		player->r.y + player->r.h/2 - player->shield_r.h/2);
+    }
 }

@@ -10,6 +10,37 @@ LIST_HEAD(debrises);
 
 SDL_Texture* explosionTexture;
 
+static void gen_sheild_debris(Player* p)
+{
+    Debris* d;
+    int x, y, w, h;
+
+    w = p->r.w / 9;
+    h = p->r.h / 9;
+
+    for (y = 0; y < p->r.h; y += h)
+    {
+	for (x = 0; x < p->r.w; x += w)
+	{
+	    d = malloc(sizeof(Debris));
+	    memset(d, 0, sizeof(Debris));
+	    list_add(&d->list, &debrises);
+
+	    d->x = p->r.x + p->r.w / 2;
+	    d->y = p->r.y + p->r.h / 2;
+	    d->dx = -5 + rand() % 10;
+	    d->dy = -5 + rand() % 10;
+	    d->health = 60 * 2;
+	    d->texture = p->shield;
+
+	    d->rect.x = x;
+	    d->rect.y = y;
+	    d->rect.w = w;
+	    d->rect.h = h;
+	}
+    }
+}
+
 static void gen_debris(Player* e)
 {
     Debris* d;
@@ -71,7 +102,7 @@ static void logic_debris(void)
 	d->x += d->dx;
 	d->y += d->dy;
 
-	d->dy += 1;
+	//d->dy += 1;
 
 	if (--d->health <= 0) {
 	    pos = list_del_update_pos(pos);
@@ -164,6 +195,11 @@ void init_explosion_texture(void)
 		"Couldn't load explosion texture: %s\n", SDL_GetError());
 }
 
+void sheild_shatter(Player* p)
+{
+    gen_sheild_debris(p);
+}
+
 void gen_destroy_effect(Enemy* e)
 {
     gen_explosion(e->r.x, e->r.y, 30);
@@ -175,6 +211,7 @@ void logic_destroy_effect(void)
     logic_explosions();
     logic_debris();
 }
+
 void draw_destroy_effect(void)
 {
     draw_explosions();

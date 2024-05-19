@@ -48,8 +48,16 @@ static int bullet_hit_player(Bullet* b, Player* p)
     if (collision(&b->r, &p->r)) {
 	play_sound(SND_PLAYER_DIE, CH_PLAYER);
 	b->health = 0;
-	if (p->health>0)
-	    p->health--;
+
+	if (p->shield_health >= 0) {
+	    play_sound(SND_SHIELD_SHATTER, CH_PLAYER);
+	    sheild_shatter(p);
+	    if (p->shield_health>0)
+		p->shield_health --;
+	} else {
+	    if (p->health>0)
+		p->health--;
+	}
 
 	return 1;
     }

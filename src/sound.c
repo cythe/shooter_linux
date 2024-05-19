@@ -32,6 +32,7 @@ static void load_sounds(void)
     sounds[SND_PLAYER_FIRE] = Mix_LoadWAV("resource/334227__jradcoolness__laser.ogg");
     sounds[SND_ALIEN_FIRE] = Mix_LoadWAV("resource/196914__dpoggioli__laser-gun.ogg");
     sounds[SND_PLAYER_DIE] = Mix_LoadWAV("resource/245372__quaker540__hq-explosion.ogg");
+    sounds[SND_SHIELD_SHATTER] = Mix_LoadWAV("resource/shield_shatter.ogg");
     sounds[SND_ALIEN_DIE] = Mix_LoadWAV("resource/10 Guage Shotgun-SoundBible.com-74120584.ogg");
     sounds[SND_POINTS] = Mix_LoadWAV("resource/342749__rhodesmas__notification-01.ogg");
 }

@@ -53,6 +53,7 @@ struct _ship {
     int bullet_reload;
     int missile_level;
     int missile_reload;
+    int shield_health;
     int id_sound_die;
     struct list_head list;
 

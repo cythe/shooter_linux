@@ -137,6 +137,10 @@ void logic_points(void)
 		g_player.health++;
 	    }
 
+	    if(p->type == POINT_TYPE_S && g_player.shield_health <= 0) {
+		g_player.shield_health++;
+	    }
+
 	    highscore = MAX(score, highscore);
 
 	    play_sound(SND_POINTS, CH_POINTS);
