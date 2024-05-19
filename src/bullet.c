@@ -4,6 +4,7 @@
 #include "enemy.h"
 #include "sound.h"
 #include "stage.h"
+#include "effect.h"
 #include "tools.h"
 
 LIST_HEAD(player_bullets);
@@ -64,39 +65,47 @@ static int bullet_hit_player(Bullet* b, Player* p)
     return 0;
 }
 
+static void move_float_bullet(Bullet *b)
+{
+    int flagdx, flagdy;
+
+    b->r.x += b->dx;
+    b->r.y += b->dy;
+
+    if (b->fdx < 0)
+	flagdx = -1;
+    else
+	flagdx = 1;
+
+    if (b->fdy < 0)
+	flagdy = -1;
+    else
+	flagdy = 1;
+
+    b->fdx_sum += fabs(b->fdx);
+    b->fdy_sum += fabs(b->fdy);
+
+    if ((b->fdx_sum) > 0.5) {
+	b->fdx_sum -= 1.0;
+	b->r.x += flagdx * 1;
+    }
+    if ((b->fdy_sum) > 0.5) {
+	b->fdy_sum -= 1.0;
+	b->r.y += flagdy * 1;
+    }
+
+}
+
 static void logic_player_bomb(void)
 {
     struct list_head* pos;
     Bullet* b;
-    int flagdx, flagdy;
 
     list_for_each(pos, &player_bomb_bullets)
     {
 	b = list_to_Bullet(pos);
-	b->r.x += b->dx;
-	b->r.y += b->dy;
 
-	if (b->fdx < 0)
-	    flagdx = -1;
-	else
-	    flagdx = 1;
-
-	if (b->fdy < 0)
-	    flagdy = -1;
-	else
-	    flagdy = 1;
-
-	b->fdx_sum += fabs(b->fdx);
-	b->fdy_sum += fabs(b->fdy);
-
-	if ((b->fdx_sum) > 0.5) {
-	    b->fdx_sum -= 1.0;
-	    b->r.x += flagdx * 1;
-	}
-	if ((b->fdy_sum) > 0.5) {
-	    b->fdy_sum -= 1.0;
-	    b->r.y += flagdy * 1;
-	}
+	move_float_bullet(b);
 
 	bullet_hit_enemy(b);
 
@@ -171,34 +180,12 @@ static void logic_enemy_bullets(void)
 {
     struct list_head* pos;
     Bullet* b;
-    int flagdx, flagdy;
+
     list_for_each(pos, &enemies_bullets)
     {
 	b = list_to_Bullet(pos);
-	b->r.x += b->dx;
-	b->r.y += b->dy;
 
-	if (b->fdx < 0)
-	    flagdx = -1;
-	else
-	    flagdx = 1;
-
-	if (b->fdy < 0)
-	    flagdy = -1;
-	else
-	    flagdy = 1;
-
-	b->fdx_sum += fabs(b->fdx);
-	b->fdy_sum += fabs(b->fdy);
-
-	if ((b->fdx_sum) > 0.5) {
-	    b->fdx_sum -= 1.0;
-	    b->r.x += flagdx * 1;
-	}
-	if ((b->fdy_sum) > 0.5) {
-	    b->fdy_sum -= 1.0;
-	    b->r.y += flagdy * 1;
-	}
+	move_float_bullet(b);
 
 	if (out_of_screen(&b->r) || bullet_hit_player(b, &g_player)) {
 	    pos = list_del_update_pos(pos);

@@ -59,8 +59,10 @@ static void gen_debris(Player* e)
 
 	    d->x = e->r.x + e->r.w / 2;
 	    d->y = e->r.y + e->r.h / 2;
-	    d->dx = (rand() % 5) - (rand() % 5);
-	    d->dy = -(5 + (rand() % 12));
+	    //d->dx = (rand() % 5) - (rand() % 5);
+	    //d->dy = -(5 + (rand() % 12));
+	    d->dx = rand() % 6;
+	    d->dy = rand() % 8;
 	    d->health = 60 * 2;
 	    d->texture = e->texture;
 

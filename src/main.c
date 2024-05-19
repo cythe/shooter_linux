@@ -125,7 +125,6 @@ int main(int argc, char* argv[])
 	SDL_RenderPresent(render);
 
 	/* 帧数控制 */
-	//capFrameRate(&then, &remainder);
 	capFrameRate(&then, &remainder);
     }
 
