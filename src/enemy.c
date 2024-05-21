@@ -4,6 +4,7 @@
 #include "bullet.h"
 #include "sound.h"
 #include "stage.h"
+#include "enemy.h"
 #include "effect.h"
 #include "theme.h"
 #include "tools.h"
@@ -34,8 +35,8 @@ static void enemy_fire_bullet(Player* e)
     float fdx, fdy;
     float dx, dy;
     calc_slope(player->r.x + (player->r.w / 2), player->r.y + (player->r.h / 2), e->r.x, e->r.y, &fdx, &fdy);
-    fdx *= 4;
-    fdy *= 4;
+    fdx *= ENEMY_BULLET_SPEED;
+    fdy *= ENEMY_BULLET_SPEED;
     bullet->fdx = modff(fdx, &dx);
     bullet->fdy = modff(fdy, &dy);
     bullet->dx = (int)dx;
