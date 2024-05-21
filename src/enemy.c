@@ -11,8 +11,110 @@
 
 LIST_HEAD(enemies);
 SDL_Texture* enemieTexture;
-#if 1
-static void enemy_fire_bullet(Player* e)
+
+int balabala = 720;
+int delta = 0;
+int current = 0;
+int start = 0;
+int end = 0;
+static void __enemy_fire_sector_bullet(Enemy * e)
+{
+    Bullet * bullet;
+
+    balabala = 0;
+    bullet = malloc(sizeof(Bullet));
+    memset(bullet, 0, sizeof(Bullet));
+
+    list_add(&bullet->list, &enemies_bullets);
+    bullet->r.x = e->r.x;
+    bullet->r.y = e->r.y;
+    bullet->health = 1;
+    bullet->speed = 4;
+    bullet->texture = enemieBulletTexture;
+    SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+    bullet->r.x += (e->r.w / 2) - (bullet->r.w / 2);
+    bullet->r.y += (e->r.h / 2) - (bullet->r.h / 2);
+
+    SDL_Point p = { e->r.x, e->r.y };
+    SDL_Point dp;
+
+    calculate_circle_point(p, 300, current, &dp);
+    //calculate_line_point(p, bullet->target, &dp);
+    float fdx, fdy;
+    float dx, dy;
+    calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
+    fdx *= bullet->speed;
+    fdy *= bullet->speed;
+    calculate_circle_speed(bullet->speed, current, &fdx, &fdy);
+    bullet->fdx = modff(fdx, &dx);
+    bullet->fdy = modff(fdy, &dy);
+    bullet->dx = (int)dx;
+    bullet->dy = (int)dy;
+    current += delta;
+    if (current == end) {
+	balabala = 1;
+	e->bullet_reload = 80; // (rand() % 60);
+    } else {
+	e->bullet_reload = 5; // (rand() % 60);
+    }
+}
+
+void _enemy_fire_sector_bullet(Enemy *e)
+{
+    if (balabala > 0) {
+	start = 90;
+	end = 180;
+	delta = 10;
+	current = 90;
+	__enemy_fire_sector_bullet(e);
+    }else{
+	__enemy_fire_sector_bullet(e);
+    }
+}
+
+static void __enemy_fire_circle_bullet(Enemy * e, int d)
+{
+    Bullet * bullet;
+
+    for (int i = 0; i < 360; i+=d)
+    {
+	printf("i = %d\n", i);
+	bullet = malloc(sizeof(Bullet));
+	memset(bullet, 0, sizeof(Bullet));
+
+	list_add(&bullet->list, &enemies_bullets);
+	bullet->r.x = e->r.x;
+	bullet->r.y = e->r.y;
+	bullet->health = 1;
+	bullet->speed = 8;
+	bullet->texture = enemieBulletTexture;
+	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+	bullet->r.x += (e->r.w / 2) - (bullet->r.w / 2);
+	bullet->r.y += (e->r.h / 2) - (bullet->r.h / 2);
+
+	SDL_Point p = { e->r.x, e->r.y };
+	SDL_Point dp;
+
+	calculate_circle_point(p, 300, i, &dp);
+	//calculate_line_point(p, bullet->target, &dp);
+	float fdx, fdy;
+	float dx, dy;
+	calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
+	fdx *= bullet->speed;
+	fdy *= bullet->speed;
+	calculate_circle_speed(bullet->speed, i, &fdx, &fdy);
+	bullet->fdx = modff(fdx, &dx);
+	bullet->fdy = modff(fdy, &dy);
+	bullet->dx = (int)dx;
+	bullet->dy = (int)dy;
+	//printf("x=%d, y=%d, dx=%f, dy=%f\n", p.x, p.y, bullet->dy, bullet->dy);
+    }
+    e->bullet_reload = 10; // (rand() % 60);
+}
+
+static void __enemy_fire_single_bullet(Player* e)
 {
     Bullet* bullet;
     Player* player = get_player();
@@ -42,52 +144,15 @@ static void enemy_fire_bullet(Player* e)
     bullet->dx = (int)dx;
     bullet->dy = (int)dy;
     e->bullet_reload = (rand() % 60 * 2);
+
 }
-#else
-static void enemy_fire_bullet(Enemy * e)
+
+static void enemy_fire_bullet(Player* e)
 {
-    Bullet * bullet;
-    Player * player = get_player();
-
-    int d = 0;
-    for (int i = 0; i < 120; i++)
-    {
-	bullet = malloc(sizeof(Bullet));
-	memset(bullet, 0, sizeof(Bullet));
-
-	list_add(&bullet->list, &enemies_bullets);
-	bullet->r.x = e->r.x;
-	bullet->r.y = e->r.y;
-	bullet->health = 1;
-	bullet->speed = 8;
-	bullet->texture = enemieBulletTexture;
-	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
-
-	bullet->r.x += (e->r.w / 2) - (bullet->r.w / 2);
-	bullet->r.y += (e->r.h / 2) - (bullet->r.h / 2);
-
-	SDL_Point p = { e->r.x, e->r.y };
-	SDL_Point dp;
-
-	calculate_circle_point(p, 300, d, &dp);
-	d += 3;
-	//calculate_line_point(p, bullet->target, &dp);
-	float fdx, fdy;
-	float dx, dy;
-	calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
-	fdx *= bullet->speed;
-	fdy *= bullet->speed;
-	calculate_circle_speed(bullet->speed, d, &fdx, &fdy);
-	bullet->fdx = modff(fdx, &dx);
-	bullet->fdy = modff(fdy, &dy);
-	bullet->dx = (int)dx;
-	bullet->dy = (int)dy;
-	//printf("x=%d, y=%d, dx=%f, dy=%f\n", p.x, p.y, bullet->dy, bullet->dy);
-    }
-    e->bullet_reload = 10; // (rand() % 60);
+    //__enemy_fire_single_bullet(e);
+    //__enemy_fire_circle_bullet(e, 15);
+    _enemy_fire_sector_bullet(e);
 }
-
-#endif
 
 int enemySpawnTimer = 30;
 void spawn_one_circle_enemy(void)
@@ -149,8 +214,8 @@ void spawn_one_enemy(void)
 
 void spawn_enemies(void)
 {
-    spawn_one_enemy();
-    //spawn_one_circle_enemy();
+    //spawn_one_enemy();
+    spawn_one_circle_enemy();
 }
 
 void init_enemies_texture(void)
