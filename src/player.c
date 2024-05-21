@@ -223,7 +223,8 @@ void logic_player(Player* player)
     }
 
     if (get_keyboard(SDL_SCANCODE_C)) {
-	if (player->bomb_reload == 0) {
+	if (player->bomb_reload == 0 && player->bomb > 0) {
+	    player->bomb --;
 	    player_fire_bomb(&g_player);
 	}
     }
