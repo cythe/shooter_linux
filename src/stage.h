@@ -1,6 +1,10 @@
 #pragma once
 #include "type.h"
 
+enum {
+    STAGE_1,
+};
+
 extern int score;
 extern int highscore;
 extern SDL_Window* window;

@@ -33,7 +33,6 @@ int get_screen_height(void)
 
 int init_stage(void)
 {
-    g_game_exit = 0; 
     score = 0;
     init_bullet_texture();
     init_sounds();
