@@ -109,8 +109,8 @@ void player_fire_missile(Player* player)
 	bullet->texture = playerBulletTexture;
 	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
 
-	bullet->r.y += i * bullet->r.w;
-	bullet->r.y += (g_player.r.h / 2) - (bullet->r.h / 2);
+	bullet->r.x += i * bullet->r.w;
+	bullet->r.x += (g_player.r.w / 2) - (bullet->r.w / 2);
 
 	Enemy* e = list_to_Enemy(enemies.next);
 	SDL_Point p;
@@ -144,14 +144,13 @@ void player_fire_bullet(Player* player)
 
 	bullet->r.x = player->r.x;
 	bullet->r.y = player->r.y;
-	bullet->dx = PLAYER_BULLET_SPEED;
+	bullet->dy = -PLAYER_BULLET_SPEED;
 	bullet->type = BULLET_TYPE_NORMAL;
 	bullet->health = 1;
 	bullet->texture = playerBulletTexture;
 	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
 
-	bullet->r.y += i * bullet->r.w;
-	bullet->r.y += (g_player.r.h / 2) - (bullet->r.h / 2);
+	bullet->r.x += player->r.w/2 - (i+1) * bullet->r.w/2;
     }
 
     g_player.bullet_reload = 8;

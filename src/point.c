@@ -21,8 +21,8 @@ static void __gen_point_pod(int x, int y, int t)
 
     p->r.x = x;
     p->r.y = y;
-    p->dx = -(rand() % 5);
-    p->dy = (rand() % 5) - (rand() % 5);
+    p->dx = (rand() % 5) - (rand() % 5);
+    p->dy = (rand() % 5);
     p->health = 60 * 10;
     p->type = t;
     p->texture = pointsTexture[t];

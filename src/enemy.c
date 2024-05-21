@@ -128,15 +128,15 @@ void spawn_one_enemy(void)
 
 	list_add_tail(&e->list, &enemies);
 
-	e->r.x = SCREEN_WIDTH;
-	e->r.y = rand() % SCREEN_HEIGHT;
+	e->r.x = rand() % SCREEN_HEIGHT;
+	e->r.y = 0;
 	e->health = 1;
 	e->bullet_reload = 60 * (1 + (rand() % 3));
 	e->texture = enemieTexture;
 
 	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
 
-	e->dx = -(2 + (rand() % 4));
+	e->dy = 2 + (rand() % 4);
 
 	if (e->r.y > SCREEN_HEIGHT - e->r.h) {
 	    e->r.y = SCREEN_HEIGHT - e->r.h;
@@ -145,6 +145,7 @@ void spawn_one_enemy(void)
 	enemySpawnTimer = 30 + (rand() % 60);
     }
 }
+
 void spawn_enemies(void)
 {
     spawn_one_enemy();

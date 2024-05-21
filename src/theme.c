@@ -3,11 +3,11 @@
 #include "stage.h"
 #include "tools.h"
 
-int backgroundX = 6;
+int backgroundY = 12;
 static void logic_background(void)
 {
-    if (--backgroundX < -SCREEN_WIDTH) {
-	backgroundX = 0;
+    if (++backgroundY > SCREEN_HEIGHT) {
+	backgroundY = 0;
     }
 }
 
@@ -16,12 +16,12 @@ SDL_Texture* background;
 static void draw_background(void)
 {
     SDL_Rect dest;
-    int x;
+    int y;
 
-    for (x = backgroundX; x < SCREEN_WIDTH; x += SCREEN_WIDTH)
+    for (y = backgroundY; y < 2*SCREEN_HEIGHT; y += SCREEN_HEIGHT)
     {
-	dest.x = x;
-	dest.y = 0;
+	dest.x = 0;
+	dest.y = y-SCREEN_HEIGHT;
 	dest.w = SCREEN_WIDTH;
 	dest.h = SCREEN_HEIGHT;
 
@@ -63,10 +63,10 @@ static void logic_stars(void)
 
     for (i = 0; i < MAX_STARS; i++)
     {
-	stars[i].x -= stars[i].speed;
+	stars[i].y += stars[i].speed;
 
-	if (stars[i].x < 0) {
-	    stars[i].x = SCREEN_WIDTH + stars[i].x;
+	if (stars[i].y > SCREEN_HEIGHT) {
+	    stars[i].y = 0;
 	}
     }
 }
