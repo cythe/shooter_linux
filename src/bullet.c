@@ -2,6 +2,7 @@
 #include "point.h"
 #include "player.h"
 #include "enemy.h"
+#include "theme.h"
 #include "sound.h"
 #include "stage.h"
 #include "effect.h"
@@ -120,14 +121,19 @@ static void __logic_player_missile(Bullet *b)
 {
     float fdx, fdy;
     float dx, dy;
-    SDL_Point target = b->target;
-
-    Enemy* e = list_to_Enemy(enemies.next);
     SDL_Point p;
-    get_center(&e->r, &p);
-    b->target = p;
+    Enemy* e;
 
-    calc_slope(target.x, target.y, b->r.x, b->r.y, &fdx, &fdy);
+    if (list_empty(&enemies)) {
+	b->target.x = SCREEN_WIDTH/2;
+	b->target.y = -SCREEN_HEIGHT;
+    } else {
+	e = list_to_Enemy(enemies.next);
+	get_center(&e->r, &p);
+	b->target = p;
+    }
+
+    calc_slope(b->target.x, b->target.y, b->r.x, b->r.y, &fdx, &fdy);
     fdx *= PLAYER_MISSILE_SPEED;
     fdy *= PLAYER_MISSILE_SPEED;
     b->fdx = modff(fdx, &dx);
