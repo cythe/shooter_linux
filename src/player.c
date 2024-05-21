@@ -2,6 +2,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "type.h"
+#include "theme.h"
 #include "bullet.h"
 #include "sound.h"
 #include "event.h"
@@ -29,8 +30,8 @@ void init_player_texture(void)
 int init_player(Player* player)
 {
     player->speed = PLAYER_SPEED;
-    player->r.x = 100;
-    player->r.y = 100;
+    player->r.x = SCREEN_WIDTH/2;
+    player->r.y = SCREEN_HEIGHT - player->r.h - 100;
     player->health = 3;
     player->shield_health = 1;
     player->bullet_level = 1;
