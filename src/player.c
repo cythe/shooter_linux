@@ -6,6 +6,7 @@
 #include "bullet.h"
 #include "sound.h"
 #include "event.h"
+#include "stage.h"
 #include "tools.h"
 
 Player g_player = { 0 };
