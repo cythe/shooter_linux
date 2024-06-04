@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
     sdl_init();
 
     init_stage();
+    reset_stage();
 
     while (!g_game_exit)
     {
@@ -126,6 +127,7 @@ int main(int argc, char* argv[])
 
 	/* 帧数控制 */
 	capFrameRate(&then, &remainder);
+	current_frame ++;
     }
 
     sdl_exit();

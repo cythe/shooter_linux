@@ -55,6 +55,7 @@ struct _ship {
     int missile_reload;
     int shield_health;
     int id_sound_die;
+    int appear_frame;
     struct list_head list;
 
     SDL_Point center;

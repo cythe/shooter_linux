@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "type.h"
 #include "stage.h"
 #include "sound.h"
@@ -9,6 +10,8 @@
 #include "effect.h"
 #include "hud.h"
 #include "event.h"
+
+LIST_HEAD(stage1_enemies);
 
 int score = 0;
 int highscore = 0;
@@ -51,7 +54,41 @@ int init_stage(void)
     return 0;
 }
 
+int stage_frame = 0;
+int current_frame = 0;
+
+void spawn_five_enemy(int t)
+{
+    Enemy* e;
+
+    e = malloc(sizeof(Player));
+    memset(e, 0, sizeof(Player));
+
+    list_add_tail(&e->list, &stage1_enemies);
+
+    e->r.x = 0;
+    e->r.y = SCREEN_HEIGHT / 4;
+    e->health = 1;
+    e->bullet_reload = 60 * (1 + (rand() % 3));
+    e->texture = enemieTexture;
+    e->appear_frame = stage_frame + t;
+    printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
+
+    SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
+
+    e->dx = 6;
+
+    if (e->r.y > SCREEN_HEIGHT - e->r.h) {
+	e->r.y = SCREEN_HEIGHT - e->r.h;
+    }
+}
+
 int reset_stage(void)
 {
+    int i;
+
+    for(i=0; i<5; i++)
+	spawn_five_enemy((i+2)*30);
+
     return 0;
 }

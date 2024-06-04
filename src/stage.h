@@ -1,6 +1,9 @@
 #pragma once
 #include "type.h"
 
+extern struct list_head stage1_enemies;
+extern int current_frame;
+
 enum {
     STAGE_1,
 };

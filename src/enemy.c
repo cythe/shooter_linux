@@ -8,6 +8,7 @@
 #include "effect.h"
 #include "theme.h"
 #include "tools.h"
+#include <stdio.h>
 
 LIST_HEAD(enemies);
 SDL_Texture* enemieTexture;
@@ -215,7 +216,22 @@ void spawn_one_enemy(void)
 void spawn_enemies(void)
 {
     //spawn_one_enemy();
-    spawn_one_circle_enemy();
+    //spawn_one_circle_enemy();
+    //
+    struct list_head* pos;
+    Enemy* e;
+
+    list_for_each(pos, &stage1_enemies)
+    {
+	e = list_to_Enemy(pos);
+
+	if (e->appear_frame == current_frame) {
+	    pos = list_del_update_pos(pos);
+	    list_add_tail(&e->list, &enemies);
+	} else {
+	    break;
+	}
+    }
 }
 
 void init_enemies_texture(void)
