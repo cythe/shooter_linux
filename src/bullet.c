@@ -16,11 +16,13 @@ LIST_HEAD(enemies_bullets);
 SDL_Texture* enemieBulletTexture;
 SDL_Texture* playerBulletTexture;
 
+// 判断子弹是否到达目标点
 static int catch_target(Bullet* b)
 {
     return b->r.x == b->target.x && b->r.y == b->target.y;
 }
 
+// 判断子弹是否打中敌人
 static int bullet_hit_enemy(Bullet* b)
 {
     struct list_head* pos;
@@ -66,6 +68,7 @@ static int bullet_hit_player(Bullet* b, Player* p)
     return 0;
 }
 
+// 计算子弹的位置
 static void move_float_bullet(Bullet *b)
 {
     int flagdx, flagdy;
@@ -119,8 +122,6 @@ static void logic_player_bomb(void)
 
 static void __logic_player_missile(Bullet *b)
 {
-    float fdx, fdy;
-    float dx, dy;
     SDL_Point p;
     Enemy* e;
 
@@ -133,6 +134,8 @@ static void __logic_player_missile(Bullet *b)
 	b->target = p;
     }
 
+    float fdx, fdy;
+    float dx, dy;
     calc_slope(b->target.x, b->target.y, b->r.x, b->r.y, &fdx, &fdy);
     fdx *= PLAYER_MISSILE_SPEED;
     fdy *= PLAYER_MISSILE_SPEED;
@@ -198,6 +201,143 @@ static void logic_enemy_bullets(void)
 	    free(b);
 	}
     }
+}
+
+int balabala = 720;
+int delta = 0;
+int current = 0;
+int start = 0;
+int angle = 0;
+static void __fire_sector_bullet(Enemy * e)
+{
+    Bullet * bullet;
+
+    balabala = 0;
+    bullet = malloc(sizeof(Bullet));
+    memset(bullet, 0, sizeof(Bullet));
+
+    list_add(&bullet->list, &enemies_bullets);
+    bullet->r.x = e->r.x;
+    bullet->r.y = e->r.y;
+    bullet->health = 1;
+    bullet->speed = 4;
+    bullet->texture = enemieBulletTexture;
+    SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+    bullet->r.x += (e->r.w / 2) - (bullet->r.w / 2);
+    bullet->r.y += (e->r.h / 2) - (bullet->r.h / 2);
+
+    SDL_Point p = { e->r.x, e->r.y };
+    SDL_Point dp;
+
+    calculate_circle_point(p, 300, current, &dp);
+    //calculate_line_point(p, bullet->target, &dp);
+    float fdx, fdy;
+    float dx, dy;
+    calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
+    fdx *= bullet->speed;
+    fdy *= bullet->speed;
+    calculate_circle_speed(bullet->speed, start+current, &fdx, &fdy);
+    bullet->fdx = modff(fdx, &dx);
+    bullet->fdy = modff(fdy, &dy);
+    bullet->dx = (int)dx;
+    bullet->dy = (int)dy;
+    current += delta;
+    if (abs(current) > angle) {
+	balabala = 1;
+	e->bullet_reload = 80; // (rand() % 60);
+    } else {
+	e->bullet_reload = 5; // (rand() % 60);
+    }
+}
+
+void fire_sector_bullet(struct _ship *s, void* arg)
+{
+    struct _sector_bullet *sector = arg;
+
+    if (balabala > 0) {
+	start = sector->start;
+	angle = sector->angle;
+	delta = sector->delta;
+	current = 0;
+	// free(sector);
+	__fire_sector_bullet(s);
+    }else{
+	__fire_sector_bullet(s);
+    }
+}
+
+void fire_circle_bullet(struct _ship *s, void *arg)
+{
+    Bullet * bullet;
+    int delta = 10;
+
+    for (int i = 0; i < 360; i+=delta)
+    {
+	bullet = malloc(sizeof(Bullet));
+	memset(bullet, 0, sizeof(Bullet));
+
+	list_add(&bullet->list, &enemies_bullets);
+	bullet->r.x = s->r.x;
+	bullet->r.y = s->r.y;
+	bullet->health = 1;
+	bullet->speed = 8;
+	bullet->texture = enemieBulletTexture;
+	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+	bullet->r.x += (s->r.w / 2) - (bullet->r.w / 2);
+	bullet->r.y += (s->r.h / 2) - (bullet->r.h / 2);
+
+	SDL_Point p = { s->r.x, s->r.y };
+	SDL_Point dp;
+
+	calculate_circle_point(p, 300, i, &dp);
+	//calculate_line_point(p, bullet->target, &dp);
+	float fdx, fdy;
+	float dx, dy;
+	calc_slope(dp.x, dp.y, s->r.x, s->r.y, &fdx, &fdy);
+	fdx *= bullet->speed;
+	fdy *= bullet->speed;
+	calculate_circle_speed(bullet->speed, i, &fdx, &fdy);
+	bullet->fdx = modff(fdx, &dx);
+	bullet->fdy = modff(fdy, &dy);
+	bullet->dx = (int)dx;
+	bullet->dy = (int)dy;
+	//printf("x=%d, y=%d, dx=%f, dy=%f\n", p.x, p.y, bullet->dy, bullet->dy);
+    }
+    s->bullet_reload = 10; // (rand() % 60);
+}
+
+void fire_single_bullet(struct _ship *s, void *arg)
+{
+    Bullet* bullet;
+    Player* player = get_player();
+
+    bullet = malloc(sizeof(Bullet));
+    memset(bullet, 0, sizeof(Bullet));
+
+    list_add(&bullet->list, &enemies_bullets);
+
+    bullet->r.x = s->r.x;
+    bullet->r.y = s->r.y;
+    bullet->type = BULLET_TYPE_NORMAL;
+    bullet->health = 1;
+    bullet->texture = enemieBulletTexture;
+    SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
+
+    bullet->r.x += (s->r.w / 2) - (bullet->r.w / 2);
+    bullet->r.y += (s->r.h / 2) - (bullet->r.h / 2);
+
+    float fdx, fdy;
+    float dx, dy;
+    calc_slope(player->r.x + (player->r.w / 2), player->r.y + (player->r.h / 2), s->r.x, s->r.y, &fdx, &fdy);
+    fdx *= ENEMY_BULLET_SPEED;
+    fdy *= ENEMY_BULLET_SPEED;
+    bullet->fdx = modff(fdx, &dx);
+    bullet->fdy = modff(fdy, &dy);
+    bullet->dx = (int)dx;
+    bullet->dy = (int)dy;
+    s->bullet_reload = (rand() % 60 * 2);
 }
 
 

@@ -16,6 +16,9 @@ SYS_LIBS += $(shell pkgconf --libs SDL2_mixer)
 EXTRA_LIBDIR += -L $(lib_dir)
 EXTRA_LIBS += 
 
+CFLAGS += -g
+CXFLAGS += -g
+
 TARGET = $(obj-y)
 
 TARGET_IS_LIB = 0

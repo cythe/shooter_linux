@@ -37,6 +37,23 @@ struct _bullet {
 typedef struct _bullet Bullet;
 list_to_(Bullet);
 
+/*
+ *  s     * start
+ *         delta
+ *      *
+ *  *
+ *  |angle|
+ */ 
+struct _sector_bullet {
+    // 起始角度
+    int start;
+    // 滑动角度
+    int angle;
+    // 每次滑动的角度, 包含方向 +顺时针 -逆时针
+    // delta和angle最好是倍乘关系
+    int delta;
+};
+
 /* 基础飞船的描述类型 */
 struct _ship {
     SDL_Rect r;
@@ -56,6 +73,8 @@ struct _ship {
     int shield_health;
     int id_sound_die;
     int appear_frame;
+    void (*fire_bullet)(struct _ship *s, void *arg);
+    void *bullet_arg;
     struct list_head list;
 
     SDL_Point center;

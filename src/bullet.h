@@ -13,3 +13,8 @@ void init_bullet_texture(void);
 
 void logic_bullets(void);
 void draw_bullets(void);
+
+// 各种子弹的发射函数组
+void fire_single_bullet(struct _ship *s, void* arg);
+void fire_circle_bullet(struct _ship *s, void* arg);
+void fire_sector_bullet(struct _ship *s, void* arg);

@@ -80,6 +80,14 @@ void spawn_little_boss(int t)
     e->health = 1;
     e->bullet_reload = 60 * (1 + (rand() % 3));
     e->appear_frame = stage_frame + t;
+
+    struct _sector_bullet *sector = malloc(sizeof(struct _sector_bullet));
+    sector->start = 90;
+    sector->angle = 90;
+    sector->delta = -15;
+    e->bullet_arg = sector;
+    e->fire_bullet = fire_sector_bullet;
+
     //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
 
     e->r.x = SCREEN_WIDTH /2;
@@ -95,6 +103,7 @@ void spawn_five_enemy(int direction, int t)
     e->health = 1;
     e->bullet_reload = 60 * (1 + (rand() % 3));
     e->appear_frame = stage_frame + t;
+    e->fire_bullet = fire_single_bullet;
     //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
 
     if (direction > 0) {
