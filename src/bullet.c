@@ -260,6 +260,9 @@ void fire_sector_bullet(struct _ship *s, void* arg)
 	angle = sector->angle;
 	delta = sector->delta;
 	current = 0;
+	// 发射完一组后换向
+	if (sector->change_direction)
+	    sector->delta = 0-delta;
 	// free(sector);
 	__fire_sector_bullet(s);
     }else{

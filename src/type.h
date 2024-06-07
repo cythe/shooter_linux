@@ -52,6 +52,8 @@ struct _sector_bullet {
     // 每次滑动的角度, 包含方向 +顺时针 -逆时针
     // delta和angle最好是倍乘关系
     int delta;
+    // 发射完后是否进行换向
+    int change_direction;
 };
 
 /* 基础飞船的描述类型 */

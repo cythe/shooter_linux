@@ -77,14 +77,15 @@ void spawn_little_boss(int t)
 
     e = _spawn_one_enemy();
 
-    e->health = 1;
+    e->health = 1000;
     e->bullet_reload = 60 * (1 + (rand() % 3));
     e->appear_frame = stage_frame + t;
 
     struct _sector_bullet *sector = malloc(sizeof(struct _sector_bullet));
     sector->start = 90;
-    sector->angle = 90;
-    sector->delta = -15;
+    sector->angle = 720;
+    sector->delta = -10;
+    sector->change_direction = 1;
     e->bullet_arg = sector;
     e->fire_bullet = fire_sector_bullet;
 
@@ -139,6 +140,7 @@ int reset_stage(void)
     for(i=appear_frame; i<appear_frame+24*5; i+=24)
 	spawn_five_enemy(-1, i);
 
+    // 召唤小boss
     appear_frame = 15*60;
     spawn_little_boss(appear_frame);
 
