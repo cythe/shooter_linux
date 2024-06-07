@@ -32,10 +32,17 @@ static int bullet_hit_enemy(Bullet* b)
 	Enemy* e = list_to_Enemy(pos);
 	if (collision(&b->r, &e->r)) {
 	    play_sound(SND_ALIEN_DIE, CH_ANY);
-	    gen_point_pod(e->r.x + e->r.w / 2, e->r.y + e->r.h / 2);
 	    score++;
 	    highscore = MAX(score, highscore);
 	    e->health -= b->health;
+	    if (e->health <= 0) {
+		pos = list_del_update_pos(pos);
+		if (e->health <= 0) {
+		    gen_point_pod(e->r.x + e->r.w / 2, e->r.y + e->r.h / 2);
+		    gen_destroy_effect(e);
+		}
+		free(e);
+	    }
 
 	    if(b->type != BULLET_TYPE_BOMB)
 		b->health = 0;

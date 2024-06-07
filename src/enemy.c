@@ -59,7 +59,7 @@ void logic_enemies(void)
 	e->r.x += e->dx;
 	e->r.y += e->dy;
 
-	if (out_of_screen(&e->r) || e->health <= 0) {
+	if (out_of_screen(&e->r)) {
 	    pos = list_del_update_pos(pos);
 	    if (e->health <= 0) {
 		gen_destroy_effect(e);
