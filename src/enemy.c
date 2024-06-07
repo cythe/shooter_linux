@@ -145,7 +145,6 @@ static void __enemy_fire_single_bullet(Player* e)
     bullet->dx = (int)dx;
     bullet->dy = (int)dy;
     e->bullet_reload = (rand() % 60 * 2);
-
 }
 
 static void enemy_fire_bullet(Player* e)
@@ -155,69 +154,8 @@ static void enemy_fire_bullet(Player* e)
     _enemy_fire_sector_bullet(e);
 }
 
-int enemySpawnTimer = 30;
-void spawn_one_circle_enemy(void)
-{
-    Enemy * e;
-
-    if (--enemySpawnTimer <= 0) {
-	e = malloc(sizeof(Player));
-	memset(e, 0, sizeof(Player));
-
-	list_add_tail(&e->list, &enemies);
-
-	e->r.x = SCREEN_WIDTH/2;
-	e->r.y = SCREEN_HEIGHT/2;
-	e->health = 1;
-	e->bullet_reload = 60; // * (1 + (rand() % 3));
-	e->texture = enemieTexture;
-
-	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
-
-	//e->dx = -(2 + (rand() % 4));
-
-	if (e->r.y > SCREEN_HEIGHT - e->r.h) {
-	    e->r.y = SCREEN_HEIGHT - e->r.h;
-	}
-
-	enemySpawnTimer = 6000;//30 + (rand() % 60);
-
-    }
-}
-
-void spawn_one_enemy(void)
-{
-    Enemy* e;
-
-    if (--enemySpawnTimer <= 0) {
-	e = malloc(sizeof(Player));
-	memset(e, 0, sizeof(Player));
-
-	list_add_tail(&e->list, &enemies);
-
-	e->r.x = rand() % SCREEN_HEIGHT;
-	e->r.y = 0;
-	e->health = 1;
-	e->bullet_reload = 60 * (1 + (rand() % 3));
-	e->texture = enemieTexture;
-
-	SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
-
-	e->dy = 2 + (rand() % 4);
-
-	if (e->r.y > SCREEN_HEIGHT - e->r.h) {
-	    e->r.y = SCREEN_HEIGHT - e->r.h;
-	}
-
-	enemySpawnTimer = 30 + (rand() % 60);
-    }
-}
-
 void spawn_enemies(void)
 {
-    //spawn_one_enemy();
-    //spawn_one_circle_enemy();
-    //
     struct list_head* pos;
     Enemy* e;
 
@@ -280,5 +218,3 @@ void draw_enemies(void)
 #endif
     }
 }
-
-
