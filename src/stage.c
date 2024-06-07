@@ -54,41 +54,84 @@ int init_stage(void)
     return 0;
 }
 
-int stage_frame = 0;
-int current_frame = 0;
-
-void spawn_five_enemy(int t)
+static Enemy* _spawn_one_enemy(void)
 {
     Enemy* e;
-
-    e = malloc(sizeof(Player));
-    memset(e, 0, sizeof(Player));
+    e = malloc(sizeof(Enemy));
+    memset(e, 0, sizeof(Enemy));
 
     list_add_tail(&e->list, &stage1_enemies);
 
-    e->r.x = 0;
-    e->r.y = SCREEN_HEIGHT / 4;
-    e->health = 1;
-    e->bullet_reload = 60 * (1 + (rand() % 3));
     e->texture = enemieTexture;
-    e->appear_frame = stage_frame + t;
-    printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
-
     SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
 
-    e->dx = 6;
+    return e;
+}
 
-    if (e->r.y > SCREEN_HEIGHT - e->r.h) {
-	e->r.y = SCREEN_HEIGHT - e->r.h;
+int stage_frame = 0;
+int current_frame = 0;
+
+void spawn_little_boss(int t)
+{
+    Enemy* e;
+
+    e = _spawn_one_enemy();
+
+    e->health = 1;
+    e->bullet_reload = 60 * (1 + (rand() % 3));
+    e->appear_frame = stage_frame + t;
+    //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
+
+    e->r.x = SCREEN_WIDTH /2;
+    e->r.y = SCREEN_HEIGHT / 4;
+}
+
+void spawn_five_enemy(int direction, int t)
+{
+    Enemy* e;
+
+    e = _spawn_one_enemy();
+
+    e->health = 1;
+    e->bullet_reload = 60 * (1 + (rand() % 3));
+    e->appear_frame = stage_frame + t;
+    //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
+
+    if (direction > 0) {
+	e->r.x = 0;
+	e->r.y = SCREEN_HEIGHT / 4;
+	e->dx = 6;
+    } else {
+	e->r.x = SCREEN_WIDTH;
+	e->r.y = SCREEN_HEIGHT / 4;
+	e->dx = -6;
     }
 }
 
 int reset_stage(void)
 {
     int i;
+    int appear_frame;
 
-    for(i=0; i<5; i++)
-	spawn_five_enemy((i+2)*30);
+    appear_frame = 2*60;
+    // 400ms出一个敌人, 计算间隔帧数: 60帧/1000ms * 400ms = 24帧
+    for(i=appear_frame; i<appear_frame+24*5; i+=24)
+	spawn_five_enemy(1, i);
+
+    appear_frame = 4*60;
+    for(i=appear_frame; i<appear_frame+24*5; i+=24)
+	spawn_five_enemy(-1, i);
+
+    appear_frame = 8*60;
+    for(i=appear_frame; i<appear_frame+24*5; i+=24)
+	spawn_five_enemy(1, i);
+
+    appear_frame = 10*60;
+    for(i=appear_frame; i<appear_frame+24*5; i+=24)
+	spawn_five_enemy(-1, i);
+
+    appear_frame = 15*60;
+    spawn_little_boss(appear_frame);
 
     return 0;
 }
