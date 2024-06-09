@@ -180,3 +180,39 @@ void calculate_circle_speed(int s, int d, float* dx, float* dy)
     *dy = (float)s * (float)sin(d * PI / 180);
 }
 
+void draw_circle(int x, int y, int radius, int color)
+{
+    // 初始化参数
+    int x0 = 0, y0 = radius;
+    int d = 3 - 2 * radius;
+
+    int r, g, b, a;
+
+    a = (color >> 24) & 0xff;
+    r = (color >> 16) & 0xff;
+    g = (color >> 8) & 0xff;
+    b = color & 0xff;
+
+    //SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(render, r, g, b, a);
+
+    while (y0 >= x0) {
+	SDL_RenderDrawPoint(render, x + x0, y + y0);
+	SDL_RenderDrawPoint(render, x - x0, y + y0);
+	SDL_RenderDrawPoint(render, x + x0, y - y0);
+	SDL_RenderDrawPoint(render, x - x0, y - y0);
+	SDL_RenderDrawPoint(render, x + y0, y + x0);
+	SDL_RenderDrawPoint(render, x - y0, y + x0);
+	SDL_RenderDrawPoint(render, x + y0, y - x0);
+	SDL_RenderDrawPoint(render, x - y0, y - x0);
+
+	if (d <= 0) {
+	    d += 4 * x0 + 6;
+	} else {
+	    d += 4 * (x0 - y0) + 10;
+	    y0--;
+	}
+	x0++;
+    }
+    //SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_NONE);
+}

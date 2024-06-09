@@ -51,3 +51,4 @@ SDL_Texture* loadTexture(char* filename);
 
 void calculate_circle_point(SDL_Point enter, int r, int d, SDL_Point* p);
 void calculate_circle_speed(int s, int d, float *dx, float *dy);
+void draw_circle(int x, int y, int radius, int color);
