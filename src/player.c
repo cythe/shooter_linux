@@ -55,7 +55,7 @@ static void player_fire_bomb(Player * e)
     Player * player = get_player();
 
     int d = 0;
-    for (int i = 0; i < 120; i++)
+    for (int i = 0; i < 360; i++)
     {
 	bullet = malloc(sizeof(Bullet));
 	memset(bullet, 0, sizeof(Bullet));
@@ -76,7 +76,7 @@ static void player_fire_bomb(Player * e)
 	SDL_Point dp;
 
 	calculate_circle_point(p, 600, d, &dp);
-	d += 3;
+	d += 1;
 	//calculate_line_point(p, bullet->target, &dp);
 	float fdx, fdy;
 	float dx, dy;
@@ -135,6 +135,7 @@ void player_fire_missile(Player* player)
 
 void player_fire_bullet(Player* player)
 {
+    int jiange = 14;
     // 普通子弹
     for(int i = 0; i < player->bullet_level; i++)
     {
@@ -152,7 +153,9 @@ void player_fire_bullet(Player* player)
 	bullet->texture = playerBulletTexture;
 	SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
 
-	bullet->r.x += player->r.w/2 - (i+1) * bullet->r.w/2;
+	bullet->r.x = (player->r.x + player->r.w/2);
+	bullet->r.x += i*(jiange+bullet->r.w);
+	bullet->r.x -= i*((i-1)*bullet->r.w + i*jiange)/2;
     }
 
     g_player.bullet_reload = 8;
