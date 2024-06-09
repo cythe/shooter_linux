@@ -25,6 +25,8 @@ struct _bullet {
     float fdx_sum;
     float fdy_sum;
 
+    float accelerate;
+
     int type;
     int health;
     int speed;

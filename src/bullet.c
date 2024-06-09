@@ -192,6 +192,29 @@ static void logic_player_bullets(void)
     }
 }
 
+static void update_bullet_speed(Bullet *b)
+{
+    float speedx;
+    float speedy;
+    float speed;
+    float dx, dy;
+
+    speedx = b->dx + b->fdx;
+    speedy = b->dy + b->fdy;
+    printf("before: %f, %f\n", speedx, speedy);
+    speed = speedx*speedx + speedy*speedy;
+    if (b->accelerate || speed < 36) {
+	speedx *= b->accelerate;
+	speedy *= b->accelerate;
+    }
+
+    printf("after: %f, %f\n", speedx, speedy);
+    b->fdx = modff(speedx, &dx);
+    b->fdy = modff(speedy, &dy);
+    b->dx = (int)dx;
+    b->dy = (int)dy;
+}
+
 static void logic_enemy_bullets(void)
 {
     struct list_head* pos;
@@ -202,6 +225,7 @@ static void logic_enemy_bullets(void)
 	b = list_to_Bullet(pos);
 
 	move_float_bullet(b);
+	update_bullet_speed(b);
 
 	if (out_of_screen(&b->r) || bullet_hit_player(b, &g_player)) {
 	    pos = list_del_update_pos(pos);
@@ -227,7 +251,8 @@ static void __fire_sector_bullet(Enemy * e)
     bullet->r.x = e->r.x;
     bullet->r.y = e->r.y;
     bullet->health = 1;
-    bullet->speed = 4;
+    bullet->speed = 1;
+    bullet->accelerate = 1.04;
     bullet->texture = enemieBulletTexture;
     SDL_QueryTexture(bullet->texture, NULL, NULL, &bullet->r.w, &bullet->r.h);
 
@@ -432,7 +457,7 @@ static void draw_player_bullets(void)
 
 void init_bullet_texture(void)
 {
-    playerBulletTexture = loadTexture("./resource/bullet.png");
+    playerBulletTexture = loadTexture("./resource/player_bit.png");
     if (!playerBulletTexture)
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
 		"Couldn't load bullet texture: %s\n", SDL_GetError());
