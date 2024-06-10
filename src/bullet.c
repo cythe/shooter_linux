@@ -6,6 +6,7 @@
 #include "sound.h"
 #include "stage.h"
 #include "effect.h"
+#include "buffer.h"
 #include "tools.h"
 
 LIST_HEAD(player_bullets);
@@ -201,14 +202,12 @@ static void update_bullet_speed(Bullet *b)
 
     speedx = b->dx + b->fdx;
     speedy = b->dy + b->fdy;
-    printf("before: %f, %f\n", speedx, speedy);
     speed = speedx*speedx + speedy*speedy;
     if (b->accelerate || speed < 36) {
 	speedx *= b->accelerate;
 	speedy *= b->accelerate;
     }
 
-    printf("after: %f, %f\n", speedx, speedy);
     b->fdx = modff(speedx, &dx);
     b->fdy = modff(speedy, &dy);
     b->dx = (int)dx;
@@ -234,16 +233,11 @@ static void logic_enemy_bullets(void)
     }
 }
 
-int balabala = 720;
-int delta = 0;
-int current = 0;
-int start = 0;
-int angle = 0;
-static void __fire_sector_bullet(Enemy * e)
+static void __fire_sector_bullet(Enemy *e, struct _sector_bullet *s)
 {
     Bullet * bullet;
 
-    balabala = 0;
+    //print_sector(s);
     bullet = malloc(sizeof(Bullet));
     memset(bullet, 0, sizeof(Bullet));
 
@@ -262,21 +256,22 @@ static void __fire_sector_bullet(Enemy * e)
     SDL_Point p = { e->r.x, e->r.y };
     SDL_Point dp;
 
-    calculate_circle_point(p, 300, current, &dp);
+    calculate_circle_point(p, 300, s->start + s->current, &dp);
     //calculate_line_point(p, bullet->target, &dp);
     float fdx, fdy;
     float dx, dy;
     calc_slope(dp.x, dp.y, e->r.x, e->r.y, &fdx, &fdy);
     fdx *= bullet->speed;
     fdy *= bullet->speed;
-    calculate_circle_speed(bullet->speed, start+current, &fdx, &fdy);
+    calculate_circle_speed(bullet->speed, s->start + s->current, &fdx, &fdy);
     bullet->fdx = modff(fdx, &dx);
     bullet->fdy = modff(fdy, &dy);
     bullet->dx = (int)dx;
     bullet->dy = (int)dy;
-    current += delta;
-    if (abs(current) > angle) {
-	balabala = 1;
+    s->current += s->delta;
+    if (abs(s->current) > s->angle) {
+	s->status = 0;
+	s->count-- ;
 	e->bullet_reload = 80; // (rand() % 60);
     } else {
 	e->bullet_reload = 5; // (rand() % 60);
@@ -287,18 +282,30 @@ void fire_sector_bullet(struct _ship *s, void* arg)
 {
     struct _sector_bullet *sector = arg;
 
-    if (balabala > 0) {
-	start = sector->start;
-	angle = sector->angle;
-	delta = sector->delta;
-	current = 0;
+    if (sector->count == 0) {
+	put_sector(sector);
+	return;
+    }
+
+    if (sector->status == 0) {
 	// 发射完一组后换向
 	if (sector->change_direction)
-	    sector->delta = 0-delta;
+	{
+	    if (sector->delta > 0)
+		sector->start += sector->angle;
+	    else
+		sector->start -= sector->angle;
+
+	    sector->delta = 0 - sector->delta;
+	    sector->current = 0;
+	    sector->status = 1;
+	}
 	// free(sector);
-	__fire_sector_bullet(s);
-    }else{
-	__fire_sector_bullet(s);
+	play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
+	__fire_sector_bullet(s, sector);
+    } else {
+	play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
+	__fire_sector_bullet(s, sector);
     }
 }
 
@@ -306,6 +313,8 @@ void fire_circle_bullet(struct _ship *s, void *arg)
 {
     Bullet * bullet;
     int delta = 10;
+
+    play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
 
     for (int i = 0; i < 360; i+=delta)
     {
@@ -347,6 +356,8 @@ void fire_single_bullet(struct _ship *s, void *arg)
 {
     Bullet* bullet;
     Player* player = get_player();
+
+    play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
 
     bullet = malloc(sizeof(Bullet));
     memset(bullet, 0, sizeof(Bullet));

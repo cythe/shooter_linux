@@ -56,6 +56,12 @@ struct _sector_bullet {
     int delta;
     // 发射完后是否进行换向
     int change_direction;
+    // 当前角度
+    int current;
+    // 有几组子弹
+    int count;
+    // 状态, 0 = 可用 | n = 数量
+    int status;
 };
 
 /* 基础飞船的描述类型 */

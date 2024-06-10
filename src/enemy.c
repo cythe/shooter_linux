@@ -66,7 +66,6 @@ void logic_enemies(void)
 	    }
 	    free(e);
 	} else if (--e->bullet_reload <= 0) {
-	    play_sound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
 	    enemy_fire_bullet(e);
 	}
     }
