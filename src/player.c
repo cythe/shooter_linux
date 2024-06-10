@@ -238,7 +238,7 @@ void draw_player(Player* player)
 {
     blit(player->texture, player->r.x, player->r.y);
 #if DEBUG
-    draw_rect(&player->r, GREEN);
+    draw_rect(&player->r, 0xff00ff00);
 #endif
 
     //SDL_SetTextureBlendMode(player->shield, SDL_BLENDMODE_BLEND);

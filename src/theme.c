@@ -73,7 +73,7 @@ static void logic_stars(void)
 
 void init_theme_texture(void)
 {
-    background = loadTexture("resource/background.png");
+    background = loadTexture("resource/background_1.png");
     if (!background)
 	SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR,
 		"Couldn't load background: %s\n", SDL_GetError());

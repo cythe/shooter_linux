@@ -396,7 +396,7 @@ static void draw_enemy_bullets(void)
 	Bullet* b = list_to_Bullet(pos);
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
-	draw_rect(&b->r, YELLOW);
+	draw_rect(&b->r, 0xffaa0000);
 #endif
     }
 }
@@ -423,7 +423,7 @@ static void draw_player_bomb(void)
 #if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
-	draw_rect(&b->r, YELLOW);
+	draw_rect(&b->r, 0xffaa0000);
 #endif
 #else
 	spin_rect(&b->r, b->texture, 45);
@@ -441,7 +441,7 @@ static void draw_player_missile(void)
 #if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
-	draw_rect(&b->r, YELLOW);
+	draw_rect(&b->r, 0xffaa0000);
 #endif
 #else
 	spin_rect(&b->r, b->texture, 45);
@@ -458,7 +458,7 @@ static void draw_player_bullets(void)
 #if 1
 	blit(b->texture, b->r.x, b->r.y);
 #if DEBUG
-	draw_rect(&b->r, YELLOW);
+	draw_rect(&b->r, 0xffaabb00);
 #endif
 #else
 	spin_rect(&b->r, b->texture, 45);

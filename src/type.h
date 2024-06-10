@@ -45,7 +45,7 @@ list_to_(Bullet);
  *      *
  *  *
  *  |angle|
- */ 
+ */
 struct _sector_bullet {
     // 起始角度
     int start;

@@ -87,7 +87,7 @@ static inline struct list_head* list_del_update_pos(struct list_head* entry)
 /*
  * 和GNU_C不同, 没有typeof()推断, 也就无法实现container_of()这个宏定义.
  * 万幸offsetof()还能用...所以手动将list转为容器指针, 适用于包含list_head的结构体
- * 
+ *
  * note: 还有个比较骚的方法, 就是把list放在结构体首位...
  */
 #define list_to_(name) \

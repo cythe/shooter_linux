@@ -23,7 +23,7 @@ void spin_rect(SDL_Rect * r, SDL_Texture *t, int angle)
     // 使用 SDL_RenderCopyEx 渲染纹理
     SDL_RenderCopyEx(render, t, &src, &dest, (double)angle, &center, SDL_FLIP_NONE);
 #if DEBUG
-    draw_rect(&dest, YELLOW);
+    draw_rect(&dest, 0xffaa0000);
 #endif
 }
 
@@ -70,26 +70,18 @@ void blit(SDL_Texture* texture, int x, int y)
 }
 
 /* 绘制一个矩形框, 用来debug */
-void draw_rect(SDL_Rect* r, int color)
+void draw_rect(SDL_Rect* rect, int color)
 {
-    switch(color) {
-	case RED:
-	    SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
-	    break;
-	case GREEN:
-	    SDL_SetRenderDrawColor(render, 0, 255, 0, 255);
-	    break;
-	case BLUE:
-	    SDL_SetRenderDrawColor(render, 0, 0, 255, 255);
-	    break;
-	case YELLOW:
-	    SDL_SetRenderDrawColor(render, 255, 255, 0, 255);
-	    break;
-	default:
-	    break;
-    }
+    int r, g, b, a;
 
-    SDL_RenderDrawRect(render, r);
+    a = (color >> 24) & 0xff;
+    r = (color >> 16) & 0xff;
+    g = (color >> 8) & 0xff;
+    b = color & 0xff;
+
+    SDL_SetRenderDrawColor(render, r, g, b, a);
+
+    SDL_RenderDrawRect(render, rect);
 }
 
 /* 绘制任意矩形范围 */
