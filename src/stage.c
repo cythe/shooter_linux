@@ -9,9 +9,11 @@
 #include "point.h"
 #include "effect.h"
 #include "hud.h"
+#include "buffer.h"
 #include "event.h"
 
-LIST_HEAD(stage1_enemies);
+LIST_HEAD(stage1_enemies); // 雷神咆哮
+LIST_HEAD(stage2_enemies); // 狂风山谷
 
 int score = 0;
 int highscore = 0;
@@ -54,13 +56,13 @@ int init_stage(void)
     return 0;
 }
 
-static Enemy* _spawn_one_enemy(void)
+static Enemy* _spawn_one_enemy(struct list_head* stage_enemy_list)
 {
     Enemy* e;
     e = malloc(sizeof(Enemy));
     memset(e, 0, sizeof(Enemy));
 
-    list_add_tail(&e->list, &stage1_enemies);
+    list_add_tail(&e->list, stage_enemy_list);
 
     e->texture = enemieTexture;
     SDL_QueryTexture(e->texture, NULL, NULL, &e->r.w, &e->r.h);
@@ -71,24 +73,48 @@ static Enemy* _spawn_one_enemy(void)
 int stage_frame = 0;
 int current_frame = 0;
 
-void spawn_little_boss(int t)
+void load_sector_bullet(struct _ship *e, int start, int angle, int delta, int change_direction, int cnt)
+{
+    struct _sector_bullet *sector = get_sector();
+
+    sector->start = start;
+    sector->angle = angle;
+    sector->delta = delta;
+    sector->change_direction = change_direction;
+    sector->count = cnt;
+    sector->status = 1;
+    e->bullet_arg = sector;
+    e->fire_bullet = fire_sector_bullet;
+}
+
+void spawn_b_enemy(int t)
 {
     Enemy* e;
 
-    e = _spawn_one_enemy();
+    e = _spawn_one_enemy(&stage1_enemies);
 
     e->health = 1000;
     e->bullet_reload = 60 * (1 + (rand() % 3));
     e->appear_frame = stage_frame + t;
 
-    struct _sector_bullet *sector = malloc(sizeof(struct _sector_bullet));
-    sector->start = 90;
-    sector->angle = 720;
-    sector->delta = -10;
-    sector->change_direction = 1;
-    e->bullet_arg = sector;
-    e->fire_bullet = fire_sector_bullet;
+    load_sector_bullet(e, 0, 180, 10, 1, 5);
+    //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
 
+    e->r.x = SCREEN_WIDTH / 4;
+    e->r.y = SCREEN_HEIGHT / 4;
+}
+
+void spawn_little_boss(int t)
+{
+    Enemy* e;
+
+    e = _spawn_one_enemy(&stage1_enemies);
+
+    e->health = 1000;
+    e->bullet_reload = 60 * (1 + (rand() % 3));
+    e->appear_frame = stage_frame + t;
+
+    load_sector_bullet(e, 90, 720, -10, 1, 10);
     //printf("%s: appear_frame = %d\n", __func__, e->appear_frame);
 
     e->r.x = SCREEN_WIDTH /2;
@@ -99,7 +125,7 @@ void spawn_five_enemy(int direction, int t)
 {
     Enemy* e;
 
-    e = _spawn_one_enemy();
+    e = _spawn_one_enemy(&stage1_enemies);
 
     e->health = 1;
     e->bullet_reload = 60 * (1 + (rand() % 3));
@@ -143,6 +169,10 @@ int reset_stage(void)
     // 召唤小boss
     appear_frame = 15*60;
     spawn_little_boss(appear_frame);
+
+
+    appear_frame = 18*60;
+    spawn_b_enemy(appear_frame);
 
     return 0;
 }
